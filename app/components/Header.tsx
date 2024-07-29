@@ -23,7 +23,11 @@ export function Header({
   return (
     <header className="header">
       <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <strong>{shop.name}</strong>
+        <img
+          src="/images/logo-full-color.png"
+          alt={`${shop.name} logo`}
+          className="h-[32px] w-[99px] rounded-none"
+        />
       </NavLink>
       <HeaderMenu
         menu={menu}

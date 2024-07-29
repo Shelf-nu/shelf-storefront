@@ -14,7 +14,6 @@ export const meta: MetaFunction = () => {
 export async function loader(args: LoaderFunctionArgs) {
   // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
@@ -57,9 +56,14 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  const {image} = data.featuredCollection;
   return (
     <div className="home">
-      <FeaturedCollection collection={data.featuredCollection} />
+      {image && (
+        <div className="featured-collection-image h-[400px] w-full overflow-hidden mb-4">
+          <Image data={image} sizes="100vw" className="object-center" />
+        </div>
+      )}
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
   );
@@ -73,17 +77,20 @@ function FeaturedCollection({
   if (!collection) return null;
   const image = collection?.image;
   return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
-        </div>
-      )}
+    <>
+      <Link
+        className="featured-collection"
+        to={`/collections/${collection.handle}`}
+      >
+        {image && (
+          <div className="featured-collection-image">
+            <Image data={image} sizes="100vw" />
+          </div>
+        )}
+      </Link>
+
       <h1>{collection.title}</h1>
-    </Link>
+    </>
   );
 }
 
@@ -131,6 +138,7 @@ const FEATURED_COLLECTION_QUERY = `#graphql
   fragment FeaturedCollection on Collection {
     id
     title
+    description
     image {
       id
       url
