@@ -137,7 +137,10 @@ export default function Product() {
 
   return (
     <div className="product">
-      <ProductImage image={selectedVariant?.image} />
+      <ProductImage
+        image={selectedVariant?.image}
+        className="sticky top-[40px]"
+      />
       <div className="product-main">
         <h1>{title}</h1>
         <ProductPrice

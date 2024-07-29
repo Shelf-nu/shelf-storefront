@@ -22,7 +22,13 @@ export function Header({
   const {shop, menu} = header;
   return (
     <header className="header">
-      <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
+      <NavLink
+        className="my-3"
+        prefetch="intent"
+        to="/"
+        style={activeLinkStyle}
+        end
+      >
         <img
           src="/images/logo-full-color.png"
           alt={`${shop.name} logo`}
