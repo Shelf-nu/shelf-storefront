@@ -9,9 +9,12 @@ import {
 } from '@shopify/hydrogen';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
+import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
+  return [
+    {title: appendToMetaTitle(`${data?.collection.title ?? ''} Collection`)},
+  ];
 };
 
 export async function loader(args: LoaderFunctionArgs) {

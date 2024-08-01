@@ -5,9 +5,10 @@ import {CartForm} from '@shopify/hydrogen';
 import {json, type ActionFunctionArgs} from '@shopify/remix-oxygen';
 import {CartMain} from '~/components/CartMain';
 import type {RootLoader} from '~/root';
+import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 
 export const meta: MetaFunction = () => {
-  return [{title: `Hydrogen | Cart`}];
+  return [{title: appendToMetaTitle(`Cart`)}];
 };
 
 export async function action({request, context}: ActionFunctionArgs) {

@@ -1,9 +1,10 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Link, useLoaderData, type MetaFunction} from '@remix-run/react';
 import {Pagination, getPaginationVariables} from '@shopify/hydrogen';
+import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 
 export const meta: MetaFunction = () => {
-  return [{title: `Hydrogen | Blogs`}];
+  return [{title: appendToMetaTitle('Blogs')}];
 };
 
 export async function loader(args: LoaderFunctionArgs) {

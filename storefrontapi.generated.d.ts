@@ -877,6 +877,30 @@ export type ProductFragment = Pick<
     >;
   };
   seo: Pick<StorefrontAPI.Seo, 'description' | 'title'>;
+  productFeatures?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  transformYourAssetManagement?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  perfectFor?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  whatOurClientsSay?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  extraInfo?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  howToUse?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  shipping?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
+  returnPolicy?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
 };
 
 export type ProductQueryVariables = StorefrontAPI.Exact<{
@@ -946,6 +970,30 @@ export type ProductQuery = {
         >;
       };
       seo: Pick<StorefrontAPI.Seo, 'description' | 'title'>;
+      productFeatures?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      transformYourAssetManagement?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      perfectFor?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      whatOurClientsSay?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      extraInfo?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      howToUse?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      shipping?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
+      returnPolicy?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
     }
   >;
 };
@@ -1188,7 +1236,7 @@ interface GeneratedQueryTypes {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n\n    # metafields\n    productFeatures: metafield(namespace: "custom", key: "product_features") {\n      value\n      type\n      key\n    }\n    transformYourAssetManagement: metafield(namespace: "custom", key: "transform_your_specialized_asset_management") {\n      value\n      type\n      key\n    }\n\n    perfectFor: metafield(namespace: "custom", key: "perfect_for") {\n      value\n      type\n      key\n    }\n    whatOurClientsSay: metafield(namespace: "custom", key: "what_our_specialized_industry_clients_say") {\n      value\n      type\n      key\n    }\n    extraInfo: metafield(namespace: "custom", key: "extra_info") {\n      value\n      type\n      key\n    }\n    howToUse: metafield(namespace: "custom", key: "how_to_use") {\n      value\n      type\n      key\n    }  \n    shipping: metafield(namespace: "custom", key: "shipping") {\n      value\n      type\n      key\n    }  \n    returnPolicy: metafield(namespace: "custom", key: "return_policy") {\n      value\n      type\n      key\n    }  \n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };

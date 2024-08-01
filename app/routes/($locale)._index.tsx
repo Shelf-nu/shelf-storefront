@@ -6,9 +6,10 @@ import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
+import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: appendToMetaTitle('Home')}];
 };
 
 export async function loader(args: LoaderFunctionArgs) {

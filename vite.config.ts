@@ -7,7 +7,6 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     hydrogen(),
     oxygen(),
     remix({
@@ -37,7 +36,7 @@ export default defineConfig({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: [],
+      include: ['prop-types', 'react-fast-compare', 'deepmerge'],
     },
   },
 });

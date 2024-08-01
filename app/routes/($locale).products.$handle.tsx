@@ -12,9 +12,13 @@ import {getVariantUrl} from '~/lib/variants';
 import {ProductPrice} from '~/components/ProductPrice';
 import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {extractProductMetafields, isBundledProduct} from '~/utils/products';
+
+import {MetafieldsAccordion} from '~/components/product/metafields';
+import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
+  return [{title: appendToMetaTitle(data?.product.title ?? '')}];
 };
 
 export async function loader(args: LoaderFunctionArgs) {
@@ -132,9 +136,9 @@ export default function Product() {
     product.selectedVariant,
     variants,
   );
+  const metafields = extractProductMetafields(product);
 
   const {title, descriptionHtml} = product;
-
   return (
     <div className="product">
       <ProductImage
@@ -142,12 +146,22 @@ export default function Product() {
         className="sticky top-[40px]"
       />
       <div className="product-main">
-        <h1>{title}</h1>
+        <img
+          src="/images/logo-full-color.png"
+          alt="shelf-logo"
+          className="h-6 mb-3"
+        />
+
+        <h1 className="md:max-w-[550px]">{title}</h1>
         <ProductPrice
           price={selectedVariant?.price}
           compareAtPrice={selectedVariant?.compareAtPrice}
         />
+
         <br />
+        <div>
+          <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+        </div>
         <Suspense
           fallback={
             <ProductForm
@@ -172,11 +186,8 @@ export default function Product() {
         </Suspense>
         <br />
         <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+        <MetafieldsAccordion metafields={metafields} />
+
         <br />
       </div>
       <Analytics.ProductView
@@ -259,6 +270,49 @@ const PRODUCT_FRAGMENT = `#graphql
       description
       title
     }
+
+    # metafields
+    productFeatures: metafield(namespace: "custom", key: "product_features") {
+      value
+      type
+      key
+    }
+    transformYourAssetManagement: metafield(namespace: "custom", key: "transform_your_specialized_asset_management") {
+      value
+      type
+      key
+    }
+
+    perfectFor: metafield(namespace: "custom", key: "perfect_for") {
+      value
+      type
+      key
+    }
+    whatOurClientsSay: metafield(namespace: "custom", key: "what_our_specialized_industry_clients_say") {
+      value
+      type
+      key
+    }
+    extraInfo: metafield(namespace: "custom", key: "extra_info") {
+      value
+      type
+      key
+    }
+    howToUse: metafield(namespace: "custom", key: "how_to_use") {
+      value
+      type
+      key
+    }  
+    shipping: metafield(namespace: "custom", key: "shipping") {
+      value
+      type
+      key
+    }  
+    returnPolicy: metafield(namespace: "custom", key: "return_policy") {
+      value
+      type
+      key
+    }  
   }
   ${PRODUCT_VARIANT_FRAGMENT}
 ` as const;
