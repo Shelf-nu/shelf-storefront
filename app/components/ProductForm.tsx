@@ -73,18 +73,20 @@ export function ProductForm({
             }}
             variant="secondary"
             size="sm"
+            className="rounded-r-none"
           >
             <MinusIcon />
           </Button>
           <input
             value={quantity}
             onChange={handleQuantityChange}
-            className="w-[62px] h-[38px] p-[8px 16px 8px 16px]  border-[0px 1px 0px 0px] opacity-[0px] m-0"
+            className="w-[52px] h-[38px] p-[8px 16px 8px 16px] border-l-0 border-r-0  opacity-[0px] m-0 border-gray-300 rounded-none text-[14px]"
           />
           <Button
             onClick={() => setQuantity(quantity + 1)}
             variant="secondary"
             size="sm"
+            className="rounded-l-none"
           >
             <PlusIcon />
           </Button>
