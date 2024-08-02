@@ -16,9 +16,15 @@ import {extractProductMetafields, isBundledProduct} from '~/utils/products';
 
 import {MetafieldsAccordion} from '~/components/product/metafields';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
+import {Breadcrumbs} from '~/components/breadcrumbs';
+import {ProductMedia} from '~/components/product/product-media';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: appendToMetaTitle(data?.product.title ?? '')}];
+};
+
+export const handle = {
+  breadcrumbType: 'product',
 };
 
 export async function loader(args: LoaderFunctionArgs) {
@@ -139,25 +145,30 @@ export default function Product() {
   const metafields = extractProductMetafields(product);
 
   const {title, descriptionHtml} = product;
+  // console.log(product.handle);
+
   return (
     <div className="product">
-      <ProductImage
-        image={selectedVariant?.image}
-        className="sticky top-[40px]"
-      />
+      <div className="flex flex-col gap-4">
+        <ProductImage
+          image={selectedVariant?.image}
+          className="sticky top-[40px]"
+        />
+        <ProductMedia media={product.media} />
+      </div>
+
       <div className="product-main">
+        <Breadcrumbs />
         <img
           src="/images/logo-full-color.png"
           alt="shelf-logo"
           className="h-6 mb-3"
         />
-
         <h1 className="md:max-w-[550px]">{title}</h1>
         <ProductPrice
           price={selectedVariant?.price}
           compareAtPrice={selectedVariant?.compareAtPrice}
         />
-
         <br />
         <div>
           <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
@@ -187,7 +198,6 @@ export default function Product() {
         <br />
         <br />
         <MetafieldsAccordion metafields={metafields} />
-
         <br />
       </div>
       <Analytics.ProductView
@@ -245,6 +255,36 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
     }
   }
 ` as const;
+const MEDIA_FRAGMENT = `#graphql
+  fragment mediaFieldsByType on Media {
+    ...on ExternalVideo {
+      id
+      embeddedUrl
+    }
+    ...on MediaImage {
+      image {
+        url
+      }
+    }
+    ...on Model3d {
+      sources {
+        url
+        mimeType
+        format
+        filesize
+      }
+    }
+    ...on Video {
+      sources {
+        url
+        mimeType
+        format
+        height
+        width
+      }
+    }
+  }
+`;
 
 const PRODUCT_FRAGMENT = `#graphql
   fragment Product on Product {
@@ -269,6 +309,23 @@ const PRODUCT_FRAGMENT = `#graphql
     seo {
       description
       title
+    }
+    collections(first: 1) {
+      nodes {
+        title
+        handle
+      }
+    }
+
+    media(first: 10) {
+      edges {
+        node {
+          __typename
+          id
+          mediaContentType
+          ...mediaFieldsByType
+        }
+      }
     }
 
     # metafields
@@ -315,6 +372,7 @@ const PRODUCT_FRAGMENT = `#graphql
     }  
   }
   ${PRODUCT_VARIANT_FRAGMENT}
+  ${MEDIA_FRAGMENT}
 ` as const;
 
 const PRODUCT_QUERY = `#graphql

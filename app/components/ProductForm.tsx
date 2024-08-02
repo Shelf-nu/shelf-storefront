@@ -11,6 +11,7 @@ import {PricePerSheet} from './product/price-per-sheet';
 import {useState} from 'react';
 import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
 import {Button} from './button';
+import {QuantitySelector} from './product/quantity-selector';
 
 export function ProductForm({
   product,
@@ -23,12 +24,6 @@ export function ProductForm({
 }) {
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = Number(e.target.value);
-    if (v > 0) {
-      setQuantity(v);
-    }
-  };
 
   return (
     <div className="">
@@ -43,7 +38,7 @@ export function ProductForm({
 
       <br />
       <div className="flex gap-2 items-center">
-        <div className="flex-1 [&>form]:w-full">
+        <div className="flex-1 [&>form]:w-full [&>form]:max-w-full">
           <AddToCartButton
             disabled={!selectedVariant || !selectedVariant.availableForSale}
             onClick={() => {
@@ -64,33 +59,7 @@ export function ProductForm({
             {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
           </AddToCartButton>
         </div>
-        <div className="flex h-[38px]">
-          <Button
-            onClick={() => {
-              if (quantity > 1) {
-                setQuantity(quantity - 1);
-              }
-            }}
-            variant="secondary"
-            size="sm"
-            className="rounded-r-none"
-          >
-            <MinusIcon />
-          </Button>
-          <input
-            value={quantity}
-            onChange={handleQuantityChange}
-            className="w-[52px] h-[38px] p-[8px 16px 8px 16px] border-l-0 border-r-0  opacity-[0px] m-0 border-gray-300 rounded-none text-[14px]"
-          />
-          <Button
-            onClick={() => setQuantity(quantity + 1)}
-            variant="secondary"
-            size="sm"
-            className="rounded-l-none"
-          >
-            <PlusIcon />
-          </Button>
-        </div>
+        <QuantitySelector state={[quantity, setQuantity]} />
       </div>
     </div>
   );

@@ -448,10 +448,7 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .header-ctas {
-  align-items: center;
   display: flex;
-  grid-gap: 1rem;
-  margin-left: auto;
 }
 
 /*
@@ -668,7 +665,7 @@ button.reset:hover:not(:has(> *)) {
 .product {
   display: grid;
   @media (min-width: 45em) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.6fr minmax(0, 1fr);
     grid-gap: 4rem;
   }
 }

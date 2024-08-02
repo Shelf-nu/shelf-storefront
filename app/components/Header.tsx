@@ -3,6 +3,7 @@ import {Await, NavLink} from '@remix-run/react';
 import {type CartViewPayload, useAnalytics} from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
+import {ShoppingCartIcon} from './icons';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -37,6 +38,7 @@ export function Header({
       </NavLink>
       <HeaderMenu
         menu={menu}
+        isLoggedIn={isLoggedIn}
         viewport="desktop"
         primaryDomainUrl={header.shop.primaryDomain.url}
         publicStoreDomain={publicStoreDomain}
@@ -47,17 +49,19 @@ export function Header({
 }
 
 export function HeaderMenu({
+  isLoggedIn,
   menu,
   primaryDomainUrl,
   viewport,
   publicStoreDomain,
 }: {
+  isLoggedIn: Promise<boolean>;
   menu: HeaderProps['header']['menu'];
   primaryDomainUrl: HeaderProps['header']['shop']['primaryDomain']['url'];
   viewport: Viewport;
   publicStoreDomain: HeaderProps['publicStoreDomain'];
 }) {
-  const className = `header-menu-${viewport}`;
+  const className = `header-menu-${viewport} text-gray-700 items-center justify-center gap-4 flex w-full`;
 
   function closeAside(event: React.MouseEvent<HTMLAnchorElement>) {
     if (viewport === 'mobile') {
@@ -103,6 +107,14 @@ export function HeaderMenu({
           </NavLink>
         );
       })}
+      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
+        <Suspense fallback="Sign in">
+          <Await resolve={isLoggedIn} errorElement="Sign in">
+            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
+          </Await>
+        </Suspense>
+      </NavLink>
+      <SearchToggle />
     </nav>
   );
 }
@@ -114,14 +126,6 @@ function HeaderCtas({
   return (
     <nav className="header-ctas" role="navigation">
       <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
-      <SearchToggle />
       <CartToggle cart={cart} />
     </nav>
   );
@@ -166,7 +170,14 @@ function CartBadge({count}: {count: number | null}) {
         } as CartViewPayload);
       }}
     >
-      Cart {count === null ? <span>&nbsp;</span> : count}
+      <div className="w-5 h-auto text-gray-600 relative">
+        <ShoppingCartIcon />
+        {/* {count !== null && (
+          <span className="text-[10px] absolute top-[-10px] right-[-7px]  size-[14px] text-center align-middle leading-[10px] pt-[2px]">
+            {count}
+          </span>
+        )} */}
+      </div>{' '}
     </a>
   );
 }
