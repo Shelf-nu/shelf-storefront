@@ -9,6 +9,7 @@ import {
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/lib/variants';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
+import {ProductCard} from './($locale)._index';
 
 export const meta: MetaFunction<typeof loader> = () => {
   return [{title: appendToMetaTitle(`Products`)}];
@@ -80,48 +81,9 @@ function ProductsGrid({products}: {products: ProductItemFragment[]}) {
   return (
     <div className="products-grid">
       {products.map((product, index) => {
-        return (
-          <ProductItem
-            key={product.id}
-            product={product}
-            loading={index < 8 ? 'eager' : undefined}
-          />
-        );
+        return <ProductCard product={product} key={product.id} />;
       })}
     </div>
-  );
-}
-
-function ProductItem({
-  product,
-  loading,
-}: {
-  product: ProductItemFragment;
-  loading?: 'eager' | 'lazy';
-}) {
-  const variant = product.variants.nodes[0];
-  const variantUrl = useVariantUrl(product.handle, variant.selectedOptions);
-  return (
-    <Link
-      className="product-item"
-      key={product.id}
-      prefetch="intent"
-      to={variantUrl}
-    >
-      {product.featuredImage && (
-        <Image
-          alt={product.featuredImage.altText || product.title}
-          aspectRatio="1/1"
-          data={product.featuredImage}
-          loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
-        />
-      )}
-      <h4>{product.title}</h4>
-      <small>
-        <Money data={product.priceRange.minVariantPrice} />
-      </small>
-    </Link>
   );
 }
 
@@ -134,12 +96,14 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
     id
     handle
     title
-    featuredImage {
-      id
-      altText
-      url
-      width
-      height
+    images(first: 2) {
+      nodes {
+        id
+        url
+        altText
+        width
+        height
+      }
     }
     priceRange {
       minVariantPrice {

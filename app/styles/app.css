@@ -31,11 +31,11 @@ h2,
 h3,
 h4,
 h5 {
-  @apply font-semibold text-gray-900;
+  @apply font-medium text-gray-900;
 }
 
 h1 {
-  @apply text-display-sm font-semibold;
+  @apply text-display-sm font-medium;
 }
 h2 {
   @apply text-display-xs;
@@ -590,29 +590,22 @@ button.reset:hover:not(:has(> *)) {
   position: relative;
 }
 
-.featured-collection-image {
-  aspect-ratio: 1 / 1;
-  @media (min-width: 45em) {
-    aspect-ratio: 16 / 9;
-  }
-}
-
 .featured-collection img {
   height: auto;
   max-height: 100%;
   object-fit: cover;
 }
 
-.recommended-products-grid {
+.featured-products-grid {
   display: grid;
   grid-gap: 1.5rem;
   grid-template-columns: repeat(2, 1fr);
   @media (min-width: 45em) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-.recommended-product img {
+.featured-product img {
   height: auto;
 }
 
@@ -679,7 +672,8 @@ button.reset:hover:not(:has(> *)) {
   width: 100%;
 }
 
-.product-main {
+.product-main,
+.product-media {
   align-self: start;
   position: sticky;
   top: 6rem;

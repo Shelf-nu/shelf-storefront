@@ -56,15 +56,17 @@ export const Button = React.forwardRef<HTMLElement, ButtonProps>(
     const variants = {
       primary: tw(
         `border-primary-400 bg-primary-500 text-white  focus:ring-2`,
-        disabled ? 'border-primary-300 bg-primary-300' : 'hover:bg-primary-400',
+        disabled
+          ? 'border-primary-300 bg-primary-300'
+          : 'hover:bg-primary-400 hover:no-underline',
       ),
       secondary: tw(
         `border-gray-300 bg-white text-gray-700 `,
-        disabled ? 'text-gray-500' : 'hover:bg-gray-50',
+        disabled ? 'text-gray-500' : 'hover:bg-gray-50 hover:no-underline',
       ),
       tertiary: tw(
         `border-b border-primary/10 pb-1 leading-none`,
-        disabled ? 'text-gray-300' : '',
+        disabled ? 'text-gray-300' : ' hover:no-underline',
       ),
       link: tw(
         `border-none p-0 text-text-sm font-semibold text-primary-700 hover:text-primary-800`,

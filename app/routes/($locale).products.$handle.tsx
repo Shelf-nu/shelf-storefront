@@ -17,7 +17,11 @@ import {extractProductMetafields, isBundledProduct} from '~/utils/products';
 import {MetafieldsAccordion} from '~/components/product/metafields';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 import {Breadcrumbs} from '~/components/breadcrumbs';
-import {ProductMedia} from '~/components/product/product-media';
+import {
+  PRODUCT_IMAGE_STYLES,
+  ProductMedia,
+} from '~/components/product/product-media';
+import {tw} from '~/utils/tw';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: appendToMetaTitle(data?.product.title ?? '')}];
@@ -145,16 +149,29 @@ export default function Product() {
   const metafields = extractProductMetafields(product);
 
   const {title, descriptionHtml} = product;
-  // console.log(product.handle);
 
   return (
     <div className="product">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 product-media">
         <ProductImage
           image={selectedVariant?.image}
-          className="sticky top-[40px]"
+          className={tw(PRODUCT_IMAGE_STYLES)}
         />
-        <ProductMedia media={product.media} />
+        <Suspense
+          fallback={<ProductMedia media={product.media} variants={[]} />}
+        >
+          <Await
+            errorElement="There was a problem loading product variants"
+            resolve={variants}
+          >
+            {(data) => (
+              <ProductMedia
+                media={product.media}
+                variants={data?.product?.variants.nodes || []}
+              />
+            )}
+          </Await>
+        </Suspense>
       </div>
 
       <div className="product-main">
@@ -230,11 +247,13 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
     image {
       __typename
       id
-      url
+      url (transform:  {
+        maxWidth: 950
+        maxHeight: 950
+      })
       altText
-      width
-      height
     }
+
     price {
       amount
       currencyCode
@@ -263,7 +282,13 @@ const MEDIA_FRAGMENT = `#graphql
     }
     ...on MediaImage {
       image {
-        url
+        url (transform:  {
+           maxWidth: 950
+           maxHeight: 950
+        })
+        altText
+        width
+        height
       }
     }
     ...on Model3d {
@@ -323,6 +348,15 @@ const PRODUCT_FRAGMENT = `#graphql
           __typename
           id
           mediaContentType
+          previewImage {
+            url (transform:  {
+              maxWidth: 950
+              maxHeight: 950
+            })
+            altText
+            width
+            height
+          }
           ...mediaFieldsByType
         }
       }

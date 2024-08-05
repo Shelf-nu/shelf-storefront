@@ -76,7 +76,7 @@ function ProductOptions({option}: {option: VariantOption}) {
           return (
             <Link
               className={twMerge(
-                'text-[14px] font-semibold py-2 px-3 rounded-[3px] whitespace-nowrap hover:no-underline',
+                'text-[14px] font-semibold py-2 px-3 rounded-[3px]  hover:no-underline',
                 isActive
                   ? 'bg-white text-gray-700 shadow-md '
                   : 'bg-gray-10 text-gray-500',

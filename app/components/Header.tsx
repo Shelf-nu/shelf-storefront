@@ -33,7 +33,7 @@ export function Header({
         <img
           src="/images/logo-full-color.png"
           alt={`${shop.name} logo`}
-          className="h-[32px] w-[99px] rounded-none"
+          className="h-[32px] min-w-[99px] w-[99px] rounded-none"
         />
       </NavLink>
       <HeaderMenu
