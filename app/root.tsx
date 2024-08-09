@@ -70,10 +70,8 @@ export async function loader(args: LoaderFunctionArgs) {
   const criticalData = await loadCriticalData(args);
 
   const {storefront, env} = args.context;
-  console.log(env);
 
   return defer({
-    MAILERLITE_ACCOUNT: process.env.MAILERLITE_ACCOUNT,
     ...deferredData,
     ...criticalData,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
@@ -85,6 +83,7 @@ export async function loader(args: LoaderFunctionArgs) {
       checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
     },
+    MAILERLITE_ACCOUNT: env.MAILERLITE_ACCOUNT,
   });
 }
 

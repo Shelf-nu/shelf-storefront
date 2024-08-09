@@ -732,16 +732,6 @@ button.reset:hover:not(:has(> *)) {
   form {
   @apply !mx-auto;
 }
-
-/* #mlb2-17018186.ml-form-embedContainer
-  .ml-form-embedWrapper
-  .ml-form-embedBody
-  .ml-form-embedContent
-  h4,
-#mlb2-17018186.ml-form-embedContainer
-  .ml-form-embedWrapper
-  .ml-form-successBody
-  .ml-form-successContent
-  h4 {
+.ml-form-successContent p {
   @apply !text-center;
-} */
+}

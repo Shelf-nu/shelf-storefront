@@ -4,6 +4,7 @@
 
 // Enhance TypeScript's built-in typings.
 import '@total-typescript/ts-reset';
+import type {createAppLoadContext} from '~/lib/context';
 
 import type {
   Storefront,
@@ -35,6 +36,7 @@ declare global {
     PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID: string;
     PUBLIC_CUSTOMER_ACCOUNT_API_URL: string;
     PUBLIC_CHECKOUT_DOMAIN: string;
+    MAILERLITE_ACCOUNT: string;
   }
 
   /**
@@ -51,7 +53,8 @@ declare module '@shopify/remix-oxygen' {
   /**
    * Declare local additions to the Remix loader context.
    */
-  interface AppLoadContext {
+  interface AppLoadContext
+    extends Awaited<ReturnType<typeof createAppLoadContext>> {
     env: Env;
     cart: HydrogenCart;
     storefront: Storefront<I18nLocale>;
