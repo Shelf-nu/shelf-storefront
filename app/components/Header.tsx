@@ -1,6 +1,6 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from '@remix-run/react';
-import {type CartViewPayload, useAnalytics} from '@shopify/hydrogen';
+import {type CartViewPayload, RichText, useAnalytics} from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {ShoppingCartIcon} from './icons';
@@ -21,30 +21,43 @@ export function Header({
   publicStoreDomain,
 }: HeaderProps) {
   const {shop, menu} = header;
+
+  const announcement = header.announcement?.nodes.filter((an) => {
+    const startDate = new Date(an.startDate?.value ?? '');
+    const endDate = new Date(an.endDate?.value ?? '');
+    const now = new Date();
+    return startDate <= now && endDate >= now;
+  })[0];
+
   return (
-    <header className="header">
-      <NavLink
-        className="my-3"
-        prefetch="intent"
-        to="/"
-        style={activeLinkStyle}
-        end
-      >
-        <img
-          src="/images/logo-full-color.png"
-          alt={`${shop.name} logo`}
-          className="h-[32px] min-w-[99px] w-[99px] rounded-none"
-        />
-      </NavLink>
-      <HeaderMenu
-        menu={menu}
-        isLoggedIn={isLoggedIn}
-        viewport="desktop"
-        primaryDomainUrl={header.shop.primaryDomain.url}
-        publicStoreDomain={publicStoreDomain}
-      />
-      <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
-    </header>
+    <div className="bg-white sticky top-0 z-50 border-b border-b-gray-200">
+      <AnnouncementBar announcement={announcement} />
+      <div className="container relative">
+        <header className="header">
+          <NavLink
+            className="my-3"
+            prefetch="intent"
+            to="/"
+            style={activeLinkStyle}
+            end
+          >
+            <img
+              src="/images/logo-full-color.png"
+              alt={`${shop.name} logo`}
+              className="h-[32px] min-w-[99px] w-[99px] rounded-none"
+            />
+          </NavLink>
+          <HeaderMenu
+            menu={menu}
+            isLoggedIn={isLoggedIn}
+            viewport="desktop"
+            primaryDomainUrl={header.shop.primaryDomain.url}
+            publicStoreDomain={publicStoreDomain}
+          />
+          <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
+        </header>
+      </div>
+    </div>
   );
 }
 
@@ -193,6 +206,39 @@ function CartToggle({cart}: Pick<HeaderProps, 'cart'>) {
       </Await>
     </Suspense>
   );
+}
+
+function AnnouncementBar({
+  announcement,
+}: {
+  announcement: HeaderQuery['announcement']['nodes'][number] | undefined | null;
+}) {
+  return announcement && announcement?.content?.value ? (
+    <div className="bg-gray-25 border-b border-b-gray-200">
+      <div className="container">
+        <RichText
+          data={announcement?.content.value}
+          components={{
+            paragraph({node}) {
+              return (
+                <p className="text-[14px] text-gray-600 leading-4">
+                  {node.children}
+                </p>
+              );
+            },
+            list({node}) {
+              return (
+                <ul className="list-disc list-inside text-[16px]">
+                  {node.children}
+                </ul>
+              );
+            },
+          }}
+          className="text-center p-4"
+        />
+      </div>
+    </div>
+  ) : null;
 }
 
 const FALLBACK_HEADER_MENU = {

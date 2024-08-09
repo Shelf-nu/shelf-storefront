@@ -1,24 +1,25 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {useLoaderData, Link, type MetaFunction} from '@remix-run/react';
 import {Image, Money} from '@shopify/hydrogen';
-import type {FeaturedCollectionFragment} from 'storefrontapi.generated';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 import {Button} from '~/components/button';
-import {useState} from 'react';
-import {tw} from '~/utils/tw';
+import type {FeaturedCollectionFragment} from 'storefrontapi.generated';
+import {TestimonialsSlider} from '~/components/marketing/testimonials-slider';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle('Home')}];
 };
 
+export type IndexLoader = typeof loader;
+
 export async function loader(args: LoaderFunctionArgs) {
   // Start fetching non-critical data without blocking time to first byte
-  // const deferredData = loadDeferredData(args);
+  const deferredData = loadDeferredData(args);
   // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
 
   return defer({
-    // ...deferredData,
+    ...deferredData,
     ...criticalData,
   });
 }
@@ -38,11 +39,32 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
   };
 }
 
+/**
+ * Load data for rendering content below the fold. This data is deferred and will be
+ * fetched after the initial page load. If it's unavailable, the page should still 200.
+ * Make sure to not throw any errors here, as it will cause the page to 500.
+ */
+function loadDeferredData({context}: LoaderFunctionArgs) {
+  const testimonials = context.storefront
+    .query(TESTIMONIALS_QUERY)
+    .catch((error) => {
+      // Log query errors, but don't throw them so the page can still render
+      console.error(error);
+      return null;
+    });
+
+  return {
+    testimonials,
+  };
+}
+
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
     <div className="home">
       <FeaturedCollection collection={data.featuredCollection} />
+
+      <TestimonialsSlider testimonials={data.testimonials} />
     </div>
   );
 }
@@ -57,38 +79,52 @@ function FeaturedCollection({
   const image = collection?.image;
   return (
     <>
-      <div className="flex items-center py-24">
-        <div className="max-w-[560px] w-full p-[40px] z-20 shadow-3xl border border-gray-200 bg-white rounded-lg [&_h1]:mb-6 [&_h1]:mt-4 [&_p]:mb-4">
-          <img
-            src="/images/logo-full-color.png"
-            alt={`Shelf logo`}
-            className="h-[32px] w-[99px] rounded-none"
-          />
-          <div dangerouslySetInnerHTML={{__html: collection.descriptionHtml}} />
-          <Button to="collections/all">Shop now</Button>
-        </div>
-        {image && (
-          <div className="featured-collection-image z-10  h-[720px] w-full flex-1 ml-[-200px] r-0 overflow-hidden">
-            <Image
-              data={image}
-              sizes="100vw"
-              className="object-center object-cover h-full w-full"
-            />
+      <div
+        className=" py-24 overflow-hidden"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, #FFFFFF 100%)',
+          backgroundImage: `url(/images/bg-overlay1.png)`,
+        }}
+      >
+        <div className="container">
+          <div className="flex items-center">
+            <div className="max-w-[560px] w-full p-[40px] z-20 shadow-3xl border border-gray-200 bg-white rounded-lg [&_h1]:mb-6 [&_h1]:mt-4 [&_p]:mb-4">
+              <img
+                src="/images/logo-full-color.png"
+                alt={`Shelf logo`}
+                className="h-[32px] w-[99px] rounded-none"
+              />
+              <div
+                dangerouslySetInnerHTML={{__html: collection.descriptionHtml}}
+              />
+              <Button to="collections/all">Shop now</Button>
+            </div>
+            {image && (
+              <div className="featured-collection-image z-10  h-[720px] w-full flex-1 ml-[-200px] r-0 overflow-hidden">
+                <Image
+                  data={image}
+                  sizes="100vw"
+                  className="object-center object-cover h-full w-full"
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="flex justify-between items-center pt-24 pb-16">
-        <h2 className="">{collection.title}</h2>
-        <Button to="collections/all" variant="secondary">
-          View all products
-        </Button>
-      </div>
-
-      <div className="featured-products-grid pb-24">
-        {collection?.products?.nodes.map((product) => (
-          <ProductCard product={product} key={product.id} />
-        ))}
+      <div className="container">
+        <div className="flex justify-between items-center pt-24 pb-16">
+          <h2 className="">{collection.title}</h2>
+          <Button to="collections/all" variant="secondary">
+            View all products
+          </Button>
+        </div>
+        <div className="featured-products-grid pb-24">
+          {collection?.products?.nodes.map((product) => (
+            <ProductCard product={product} key={product.id} />
+          ))}
+        </div>
       </div>
     </>
   );
@@ -138,7 +174,7 @@ export const ProductCard = ({
   );
 };
 
-const FEATURED_COLLECTION_QUERY = `#graphql
+const FEATURED_COLLECTION_FRAGMENT = `#graphql
   fragment FeaturedCollection on Collection {
     id
     handle
@@ -176,6 +212,9 @@ const FEATURED_COLLECTION_QUERY = `#graphql
       }
     }
   }
+  ` as const;
+
+const FEATURED_COLLECTION_QUERY = `#graphql
   query FeaturedCollection($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     collections(query: "handle:frontpage", first: 1) {
@@ -183,5 +222,44 @@ const FEATURED_COLLECTION_QUERY = `#graphql
         ...FeaturedCollection
       }
     }
+  }
+  ${FEATURED_COLLECTION_FRAGMENT}
+` as const;
+
+const TESTIMONIALS_QUERY = `#graphql
+  fragment MediaImage on Image {
+    url
+    width
+    altText
+    height
+  }
+  fragment Testimonials on QueryRoot {
+    testimonials: metaobjects(type: "testimonials", first: 5) {
+      nodes {
+      ... on Metaobject {
+          id
+          handle
+          type
+          content: field(key: "content") { value }
+          name: field(key: "name") { value }
+          postion: field(key: "position_company") { value }
+          image: field(key: "image") { 
+            reference {
+              ... on MediaImage {
+                id
+                __typename
+                image {
+                  ...MediaImage
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  query TestimonialsCollection($country: CountryCode, $language: LanguageCode)
+    @inContext(country: $country, language: $language) {
+    ...Testimonials
   }
 ` as const;

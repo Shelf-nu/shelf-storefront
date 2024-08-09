@@ -145,6 +145,20 @@ export const HEADER_QUERY = `#graphql
       }
     }
   }
+  fragment Announcement on QueryRoot {
+    announcement: metaobjects(type: "announcement", first: 5) {
+      nodes {
+      ... on Metaobject {
+          handle
+          type
+          content: field(key: "content") { value }
+          startDate: field(key: "start_date_time") { value }
+          endDate: field(key: "end_date_time") { value }
+        }
+      }
+    }
+  }
+
   query Header(
     $country: CountryCode
     $headerMenuHandle: String!
@@ -156,6 +170,9 @@ export const HEADER_QUERY = `#graphql
     menu(handle: $headerMenuHandle) {
       ...Menu
     }
+
+    ...Announcement
+    
   }
   ${MENU_FRAGMENT}
 ` as const;

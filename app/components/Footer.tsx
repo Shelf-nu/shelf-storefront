@@ -1,6 +1,8 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from '@remix-run/react';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
+import {tw} from '~/utils/tw';
+import {NewsletterForm} from './marketing/newsletter-form';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -14,21 +16,28 @@ export function Footer({
   publicStoreDomain,
 }: FooterProps) {
   return (
-    <Suspense>
-      <Await resolve={footerPromise}>
-        {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
-              <FooterMenu
-                menu={footer.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
-              />
-            )}
-          </footer>
-        )}
-      </Await>
-    </Suspense>
+    <footer className="border-t pt-20">
+      <NewsletterForm />
+      <Suspense>
+        <Await resolve={footerPromise}>
+          {(footer) => {
+            return (
+              footer?.menu &&
+              header.shop.primaryDomain?.url && (
+                <FooterMenu
+                  menu={footer.menu}
+                  primaryDomainUrl={header.shop.primaryDomain.url}
+                  publicStoreDomain={publicStoreDomain}
+                />
+              )
+            );
+          }}
+        </Await>
+      </Suspense>
+      <div className="flex items-center justify-center border-t p-8 text-gray-500 font-normal">
+        © {new Date().getFullYear()} Shelf.nu. All rights reserved.
+      </div>
+    </footer>
   );
 }
 
@@ -41,35 +50,47 @@ function FooterMenu({
   primaryDomainUrl: FooterProps['header']['shop']['primaryDomain']['url'];
   publicStoreDomain: string;
 }) {
+  const linkClasses = tw('text-gray-600');
   return (
-    <nav className="footer-menu" role="navigation">
-      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-        if (!item.url) return null;
-        // if the url is internal, we strip the domain
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-        const isExternal = !url.startsWith('/');
-        return isExternal ? (
-          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-            {item.title}
-          </a>
-        ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
-            {item.title}
-          </NavLink>
-        );
-      })}
-    </nav>
+    <div className="container">
+      <nav
+        className="flex gap-8 items-center justify-center  my-12 font-semibold"
+        role="navigation"
+      >
+        {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+          if (!item.url) return null;
+          // if the url is internal, we strip the domain
+          const url =
+            item.url.includes('myshopify.com') ||
+            item.url.includes(publicStoreDomain) ||
+            item.url.includes(primaryDomainUrl)
+              ? new URL(item.url).pathname
+              : item.url;
+          const isExternal = !url.startsWith('/');
+          return isExternal ? (
+            <a
+              href={url}
+              key={item.id}
+              rel="noopener noreferrer"
+              target="_blank"
+              className={linkClasses}
+            >
+              {item.title}
+            </a>
+          ) : (
+            <NavLink
+              end
+              key={item.id}
+              prefetch="intent"
+              to={url}
+              className={linkClasses}
+            >
+              {item.title}
+            </NavLink>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
 
@@ -114,16 +135,3 @@ const FALLBACK_FOOTER_MENU = {
     },
   ],
 };
-
-function activeLinkStyle({
-  isActive,
-  isPending,
-}: {
-  isActive: boolean;
-  isPending: boolean;
-}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}

@@ -1,6 +1,10 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import {useLoaderData, type MetaFunction} from '@remix-run/react';
+import {Form, useLoaderData, type MetaFunction} from '@remix-run/react';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
+import {Button} from '~/components/button';
+import {z} from 'zod';
+import {useZorm} from 'react-zorm';
+import Input from '~/components/form/input';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: appendToMetaTitle(data?.page.title ?? '')}];
@@ -52,15 +56,57 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
   return {};
 }
 
+const ContactSchema = z.object({
+  name: z.string(),
+  email: z.string().email(),
+  message: z.string(),
+});
+
 export default function Page() {
   const {page} = useLoaderData<typeof loader>();
+  const zo = useZorm('NewQuestionWizardScreen', ContactSchema);
 
   return (
     <div className="page">
-      <header>
-        <h1>{page.title}</h1>
-      </header>
-      <main dangerouslySetInnerHTML={{__html: page.body}} />
+      <div className="container">
+        <header>
+          <h1 className="mx-auto max-w-[400px]">{page.title}</h1>
+        </header>
+        <main dangerouslySetInnerHTML={{__html: page.body}} />
+
+        {page.handle === 'contact' && (
+          <Form
+            method="post"
+            action="/api/contact"
+            ref={zo.ref}
+            className="mx-auto"
+          >
+            <Input
+              name={zo.fields.name()}
+              error={zo.errors.name()?.message}
+              label={'Name'}
+              required
+            />
+
+            <Input
+              name={zo.fields.email()}
+              error={zo.errors.email()?.message}
+              label={'Email'}
+              required
+            />
+
+            <Input
+              name={zo.fields.name()}
+              error={zo.errors.name()?.message}
+              label={'Message'}
+              required
+              inputType="textarea"
+            />
+
+            <Button type="submit">Submit</Button>
+          </Form>
+        )}
+      </div>
     </div>
   );
 }
@@ -76,6 +122,7 @@ const PAGE_QUERY = `#graphql
       id
       title
       body
+      handle
       seo {
         description
         title

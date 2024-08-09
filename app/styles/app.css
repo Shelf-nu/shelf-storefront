@@ -453,27 +453,6 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
-* components/Footer
-* --------------------------------------------------
-*/
-.footer {
-  background: var(--color-dark);
-  margin-top: auto;
-}
-
-.footer-menu {
-  align-items: center;
-  display: flex;
-  grid-gap: 1rem;
-  padding: 1rem;
-}
-
-.footer-menu a {
-  color: var(--color-light);
-}
-
-/*
-* --------------------------------------------------
 * components/Cart
 * --------------------------------------------------
 */
@@ -738,3 +717,31 @@ button.reset:hover:not(:has(> *)) {
 .account-logout {
   display: inline-block;
 }
+
+.newsletter-form-wrapper h4 {
+  @apply !text-center;
+}
+
+#mlb2-17018186.ml-form-embedContainer .ml-form-embedWrapper.embedForm {
+  @apply !max-w-[800px] !mx-auto;
+}
+
+#mlb2-17018186.ml-form-embedContainer
+  .ml-form-embedWrapper
+  .ml-form-embedBody
+  form {
+  @apply !mx-auto;
+}
+
+/* #mlb2-17018186.ml-form-embedContainer
+  .ml-form-embedWrapper
+  .ml-form-embedBody
+  .ml-form-embedContent
+  h4,
+#mlb2-17018186.ml-form-embedContainer
+  .ml-form-embedWrapper
+  .ml-form-successBody
+  .ml-form-successContent
+  h4 {
+  @apply !text-center;
+} */

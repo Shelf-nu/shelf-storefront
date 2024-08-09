@@ -151,87 +151,91 @@ export default function Product() {
   const {title, descriptionHtml} = product;
 
   return (
-    <div className="product">
-      <div className="flex flex-col gap-4 product-media">
-        <ProductImage
-          image={selectedVariant?.image}
-          className={tw(PRODUCT_IMAGE_STYLES)}
-        />
-        <Suspense
-          fallback={<ProductMedia media={product.media} variants={[]} />}
-        >
-          <Await
-            errorElement="There was a problem loading product variants"
-            resolve={variants}
-          >
-            {(data) => (
-              <ProductMedia
-                media={product.media}
-                variants={data?.product?.variants.nodes || []}
-              />
-            )}
-          </Await>
-        </Suspense>
-      </div>
-
-      <div className="product-main">
-        <Breadcrumbs />
-        <img
-          src="/images/logo-full-color.png"
-          alt="shelf-logo"
-          className="h-6 mb-3"
-        />
-        <h1 className="md:max-w-[550px]">{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <div>
-          <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        </div>
-        <Suspense
-          fallback={
-            <ProductForm
-              product={product}
-              selectedVariant={selectedVariant}
-              variants={[]}
+    <div className="container">
+      <div className="product">
+        <div className="product-media pt-7">
+          <div className="flex flex-col gap-4 ">
+            <ProductImage
+              image={selectedVariant?.image}
+              className={tw(PRODUCT_IMAGE_STYLES)}
             />
-          }
-        >
-          <Await
-            errorElement="There was a problem loading product variants"
-            resolve={variants}
-          >
-            {(data) => (
+            <Suspense
+              fallback={<ProductMedia media={product.media} variants={[]} />}
+            >
+              <Await
+                errorElement="There was a problem loading product variants"
+                resolve={variants}
+              >
+                {(data) => (
+                  <ProductMedia
+                    media={product.media}
+                    variants={data?.product?.variants.nodes || []}
+                  />
+                )}
+              </Await>
+            </Suspense>
+          </div>
+        </div>
+
+        <div className="product-main">
+          <Breadcrumbs />
+          <img
+            src="/images/logo-full-color.png"
+            alt="shelf-logo"
+            className="h-6 mb-3"
+          />
+          <h1 className="md:max-w-[550px]">{title}</h1>
+          <ProductPrice
+            price={selectedVariant?.price}
+            compareAtPrice={selectedVariant?.compareAtPrice}
+          />
+          <br />
+          <div>
+            <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+          </div>
+          <Suspense
+            fallback={
               <ProductForm
                 product={product}
                 selectedVariant={selectedVariant}
-                variants={data?.product?.variants.nodes || []}
+                variants={[]}
               />
-            )}
-          </Await>
-        </Suspense>
-        <br />
-        <br />
-        <MetafieldsAccordion metafields={metafields} />
-        <br />
+            }
+          >
+            <Await
+              errorElement="There was a problem loading product variants"
+              resolve={variants}
+            >
+              {(data) => (
+                <ProductForm
+                  product={product}
+                  selectedVariant={selectedVariant}
+                  variants={data?.product?.variants.nodes || []}
+                />
+              )}
+            </Await>
+          </Suspense>
+          <br />
+          <br />
+          <MetafieldsAccordion metafields={metafields} />
+          <br />
+        </div>
+        <Analytics.ProductView
+          data={{
+            products: [
+              {
+                id: product.id,
+                title: product.title,
+                price: selectedVariant?.price.amount || '0',
+                vendor: product.vendor,
+                variantId: selectedVariant?.id || '',
+                variantTitle: selectedVariant?.title || '',
+                quantity: 1,
+              },
+            ],
+          }}
+        />
       </div>
-      <Analytics.ProductView
-        data={{
-          products: [
-            {
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            },
-          ],
-        }}
-      />
     </div>
   );
 }

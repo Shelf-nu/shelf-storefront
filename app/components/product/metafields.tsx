@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from '~/components/shadcn/accordion';
 import {PRODUCT_METAFIELDS_KEYS} from '~/utils/products';
-import type {Metafield} from '~/utils/products';
+import type {Metafield} from '~/utils/products/types';
 import {QrIcon, QuestionmarkIcon, ReturnIcon, ShippingIcon} from '../icons';
 import {
   Crosshair2Icon,

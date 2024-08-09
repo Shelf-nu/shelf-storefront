@@ -46,7 +46,7 @@ export default function Policy() {
   const {policy} = useLoaderData<typeof loader>();
 
   return (
-    <div className="policy">
+    <div className="policy container">
       <br />
       <br />
       <div>
@@ -54,7 +54,10 @@ export default function Policy() {
       </div>
       <br />
       <h1>{policy.title}</h1>
-      <div dangerouslySetInnerHTML={{__html: policy.body}} />
+      <div
+        dangerouslySetInnerHTML={{__html: policy.body}}
+        className="[&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-3 [&_li>p]:inline [&>p]:mb-3 [&_a]:text-primary-600 [&_ol]:list-decimal [&_ol]:list-inside"
+      />
     </div>
   );
 }

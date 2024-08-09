@@ -58,6 +58,7 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    // {rel: 'javascript', href: 'https://assets.mailerlite.com/js/universal.js'},
   ];
 }
 
@@ -69,8 +70,10 @@ export async function loader(args: LoaderFunctionArgs) {
   const criticalData = await loadCriticalData(args);
 
   const {storefront, env} = args.context;
+  console.log(env);
 
   return defer({
+    MAILERLITE_ACCOUNT: process.env.MAILERLITE_ACCOUNT,
     ...deferredData,
     ...criticalData,
     publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
@@ -138,7 +141,6 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
-
   return (
     <html lang="en">
       <head>
