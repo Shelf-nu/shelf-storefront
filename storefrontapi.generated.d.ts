@@ -289,6 +289,74 @@ export type TestimonialsFragment = {
   };
 };
 
+export type HomepageContentFragment = {
+  homepageContent: {
+    nodes: Array<
+      Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
+        fields: Array<
+          Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'> & {
+            reference?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
+                fields: Array<
+                  Pick<
+                    StorefrontAPI.MetaobjectField,
+                    'key' | 'type' | 'value'
+                  > & {
+                    reference?: StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.MediaImage, 'id'> & {
+                        image?: StorefrontAPI.Maybe<
+                          Pick<
+                            StorefrontAPI.Image,
+                            'url' | 'width' | 'altText' | 'height'
+                          >
+                        >;
+                      }
+                    >;
+                  }
+                >;
+              }
+            >;
+          }
+        >;
+      }
+    >;
+  };
+};
+
+export type WarrantySectionFragment = Pick<
+  StorefrontAPI.Metaobject,
+  'id' | 'handle' | 'type'
+> & {
+  fields: Array<
+    Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'> & {
+      reference?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.MediaImage, 'id'> & {
+          image?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'width' | 'altText' | 'height'>
+          >;
+        }
+      >;
+    }
+  >;
+};
+
+export type ThreeColumnsSectionFragment = Pick<
+  StorefrontAPI.Metaobject,
+  'id' | 'handle' | 'type'
+> & {
+  fields: Array<
+    Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'> & {
+      reference?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.MediaImage, 'id'> & {
+          image?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Image, 'url' | 'width' | 'altText' | 'height'>
+          >;
+        }
+      >;
+    }
+  >;
+};
+
 export type SitemapQueryVariables = StorefrontAPI.Exact<{
   urlLimits?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Int']['input']>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
@@ -424,6 +492,37 @@ export type HomepageContentQuery = {
               }
           >;
         }>;
+      }
+    >;
+  };
+  homepageContent: {
+    nodes: Array<
+      Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
+        fields: Array<
+          Pick<StorefrontAPI.MetaobjectField, 'key' | 'type' | 'value'> & {
+            reference?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
+                fields: Array<
+                  Pick<
+                    StorefrontAPI.MetaobjectField,
+                    'key' | 'type' | 'value'
+                  > & {
+                    reference?: StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.MediaImage, 'id'> & {
+                        image?: StorefrontAPI.Maybe<
+                          Pick<
+                            StorefrontAPI.Image,
+                            'url' | 'width' | 'altText' | 'height'
+                          >
+                        >;
+                      }
+                    >;
+                  }
+                >;
+              }
+            >;
+          }
+        >;
       }
     >;
   };
@@ -1477,7 +1576,7 @@ interface GeneratedQueryTypes {
     return: FeaturedCollectionQuery;
     variables: FeaturedCollectionQueryVariables;
   };
-  '#graphql\n  query HomepageContent($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    ...Testimonials\n  }\n  #graphql\n  fragment Testimonials on QueryRoot {\n      testimonials: metaobjects(type: "testimonials", first: 5) {\n        nodes {\n        ... on Metaobject {\n            id\n            handle\n            type\n            content: field(key: "content") { value }\n            name: field(key: "name") { value }\n            postion: field(key: "position_company") { value }\n            image: field(key: "image") { \n              reference {\n                ... on MediaImage {\n                  id\n                  __typename\n                  image {\n                    ...MediaImage\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n  #graphql\n  fragment MediaImage on Image {\n    url\n    width\n    altText\n    height\n  }\n  \n\n': {
+  '#graphql\n  query HomepageContent($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    ...Testimonials\n    ...HomepageContent\n  }\n  #graphql\n  fragment Testimonials on QueryRoot {\n      testimonials: metaobjects(type: "testimonials", first: 5) {\n        nodes {\n        ... on Metaobject {\n            id\n            handle\n            type\n            content: field(key: "content") { value }\n            name: field(key: "name") { value }\n            postion: field(key: "position_company") { value }\n            image: field(key: "image") { \n              reference {\n                ... on MediaImage {\n                  id\n                  __typename\n                  image {\n                    ...MediaImage\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n  #graphql\n  fragment MediaImage on Image {\n    url\n    width\n    altText\n    height\n  }\n  \n\n  #graphql\n  fragment HomepageContent on QueryRoot {\n    homepageContent: metaobjects(type: "homepage_content", first: 1) {\n      nodes {\n        ... on Metaobject {\n          id\n          handle\n          type\n          fields {\n            ... on MetaobjectField {\n              key\n              type\n              value\n              reference {\n                ... on Metaobject {\n                  ...WarrantySection\n                  ...ThreeColumnsSection\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n  fragment WarrantySection on Metaobject {\n    id\n    handle\n    type\n    fields {\n      key\n      type\n      value\n      reference {\n        ... on MediaImage {\n          id\n          image {\n            ...MediaImage\n          }\n        }\n      }\n    }\n  }\n\n  fragment ThreeColumnsSection on Metaobject {\n    id\n    handle\n    type\n    fields {\n      key\n      type\n      value\n      reference {\n        ... on MediaImage {\n          id\n          image {\n            ...MediaImage\n          }\n        }\n      }\n    }\n  }\n\n': {
     return: HomepageContentQuery;
     variables: HomepageContentQueryVariables;
   };

@@ -227,3 +227,68 @@ export const PUBLISHED_TESTIMONIALS_FRAGMENT = `#graphql
       }
     }
 ` as const;
+
+export const HOMEPAGE_CONTENT_FRAGMENT = `#graphql
+  fragment HomepageContent on QueryRoot {
+    homepageContent: metaobjects(type: "homepage_content", first: 1) {
+      nodes {
+        ... on Metaobject {
+          id
+          handle
+          type
+          fields {
+            ... on MetaobjectField {
+              key
+              type
+              value
+              reference {
+                ... on Metaobject {
+                  ...WarrantySection
+                  ...ThreeColumnsSection
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fragment WarrantySection on Metaobject {
+    id
+    handle
+    type
+    fields {
+      key
+      type
+      value
+      reference {
+        ... on MediaImage {
+          id
+          image {
+            ...MediaImage
+          }
+        }
+      }
+    }
+  }
+
+  fragment ThreeColumnsSection on Metaobject {
+    id
+    handle
+    type
+    fields {
+      key
+      type
+      value
+      reference {
+        ... on MediaImage {
+          id
+          image {
+            ...MediaImage
+          }
+        }
+      }
+    }
+  }
+` as const;

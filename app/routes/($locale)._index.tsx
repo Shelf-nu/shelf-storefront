@@ -6,11 +6,14 @@ import {Button} from '~/components/button';
 import type {FeaturedCollectionFragment} from 'storefrontapi.generated';
 import {TestimonialsSlider} from '~/components/marketing/testimonials-slider';
 import {
+  HOMEPAGE_CONTENT_FRAGMENT,
   MEDIA_IMAGE_FRAGMENT,
   PUBLISHED_TESTIMONIALS_FRAGMENT,
 } from '~/lib/fragments';
 import {Suspense} from 'react';
 import {ProductCard} from '~/components/product/product-card';
+import {ThreeColumns} from '~/components/generic/three-columns';
+import {WarrantySection} from '~/components/generic/warranty-section';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle('Home')}];
@@ -74,12 +77,33 @@ export default function Homepage() {
       <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
         <Await resolve={homepageContent}>
           {(response) => {
+            if (!response) return null;
+
+            const threeColumnsSection =
+              response?.homepageContent?.nodes[0].fields.find(
+                (field) => field.key === 'three_columns_section',
+              );
+            const warrantySection =
+              response?.homepageContent?.nodes[0].fields.find(
+                (field) => field.key === 'warranty_section',
+              );
+
             return (
-              response?.testimonials && (
-                <TestimonialsSlider
-                  testimonials={response?.testimonials?.nodes || null}
-                />
-              )
+              <div className="homepage-sections">
+                {warrantySection?.reference && (
+                  <WarrantySection content={warrantySection.reference} />
+                )}
+
+                {threeColumnsSection?.reference && (
+                  <ThreeColumns content={threeColumnsSection.reference} />
+                )}
+
+                {response?.testimonials && (
+                  <TestimonialsSlider
+                    testimonials={response?.testimonials?.nodes || null}
+                  />
+                )}
+              </div>
             );
           }}
         </Await>
@@ -205,7 +229,9 @@ export const HOMEPAGE_CONTENT_QUERY = `#graphql
   query HomepageContent($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     ...Testimonials
+    ...HomepageContent
   }
   ${PUBLISHED_TESTIMONIALS_FRAGMENT}
   ${MEDIA_IMAGE_FRAGMENT}
+  ${HOMEPAGE_CONTENT_FRAGMENT}
 ` as const;

@@ -278,6 +278,7 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
     }
   }
 ` as const;
+
 const MEDIA_FRAGMENT = `#graphql
   fragment mediaFieldsByType on Media {
     ...on ExternalVideo {
