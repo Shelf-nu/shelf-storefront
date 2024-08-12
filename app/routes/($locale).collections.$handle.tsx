@@ -8,9 +8,8 @@ import {
   Analytics,
 } from '@shopify/hydrogen';
 import type {ProductItemFragment} from 'storefrontapi.generated';
-import {useVariantUrl} from '~/lib/variants';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
-import {ProductCard} from './($locale)._index';
+import {ProductCard} from '~/components/product/product-card';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [

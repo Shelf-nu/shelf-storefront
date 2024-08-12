@@ -58,7 +58,6 @@ export function ThreeColumns({
       }
     }
   });
-  console.log('columns', columns);
 
   const data: ThreeColumnsData = {
     cta: cta ? (JSON.parse(cta) as CTA) : null,

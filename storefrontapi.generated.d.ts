@@ -29,7 +29,7 @@ export type CartLineFragment = Pick<
     >;
     price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
     image?: StorefrontAPI.Maybe<
-      Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText' | 'width' | 'height'>
+      Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
     >;
     product: Pick<StorefrontAPI.Product, 'handle' | 'title' | 'id' | 'vendor'>;
     selectedOptions: Array<
@@ -76,10 +76,7 @@ export type CartApiQueryFragment = Pick<
           >;
           price: Pick<StorefrontAPI.MoneyV2, 'currencyCode' | 'amount'>;
           image?: StorefrontAPI.Maybe<
-            Pick<
-              StorefrontAPI.Image,
-              'id' | 'url' | 'altText' | 'width' | 'height'
-            >
+            Pick<StorefrontAPI.Image, 'id' | 'url' | 'altText'>
           >;
           product: Pick<
             StorefrontAPI.Product,

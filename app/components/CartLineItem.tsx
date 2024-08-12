@@ -5,6 +5,10 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from '@remix-run/react';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
+import {QuantitySelector} from './product/quantity-selector';
+import {Button} from './button';
+import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
+import {tw} from '~/utils/tw';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -13,9 +17,11 @@ import {useAside} from './Aside';
 export function CartLineItem({
   layout,
   line,
+  className,
 }: {
   layout: CartLayout;
   line: OptimisticCartLine;
+  className?: string;
 }) {
   const {id, merchandise} = line;
   const {product, title, image, selectedOptions} = merchandise;
@@ -23,7 +29,13 @@ export function CartLineItem({
   const {close} = useAside();
 
   return (
-    <li key={id} className="cart-line">
+    <li
+      key={id}
+      className={tw(
+        'flex gap-5 cart-item border-b border-gray-200 py-4',
+        className,
+      )}
+    >
       {image && (
         <Image
           alt={title}
@@ -32,6 +44,7 @@ export function CartLineItem({
           height={100}
           loading="lazy"
           width={100}
+          className="h-[100px] w-[100px] bg-gray-100 rounded-[4px]"
         />
       )}
 
@@ -44,22 +57,21 @@ export function CartLineItem({
               close();
             }
           }}
+          className="font-semibold text-sm text-gray-700 item-link block"
         >
-          <p>
-            <strong>{product.title}</strong>
-          </p>
-        </Link>
-        <ProductPrice price={line?.cost?.totalAmount} />
-        <ul>
+          {product.title} -{' '}
           {selectedOptions.map((option) => (
-            <li key={option.name}>
-              <small>
-                {option.name}: {option.value}
-              </small>
-            </li>
+            <span key={option.name} className="text-[12px] text-gray-600">
+              <span className="font-semibold">{option.name}</span>:{' '}
+              {option.value}
+            </span>
           ))}
-        </ul>
-        <CartLineQuantity line={line} />
+        </Link>
+        <div className="flex justify-between items-start mt-3">
+          <ProductPrice price={line?.cost?.totalAmount} />
+
+          <CartLineQuantity line={line} />
+        </div>
       </div>
     </li>
   );
@@ -77,31 +89,39 @@ function CartLineQuantity({line}: {line: OptimisticCartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity">
-      <small>Quantity: {quantity} &nbsp;&nbsp;</small>
+    <div className="cart-line-quantity ">
       <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <button
+        <Button
           aria-label="Decrease quantity"
           disabled={quantity <= 1 || !!isOptimistic}
           name="decrease-quantity"
           value={prevQuantity}
+          variant="secondary"
+          size="sm"
+          className="rounded-r-none p-2"
         >
-          <span>&#8722; </span>
-        </button>
+          <MinusIcon />
+        </Button>
       </CartLineUpdateButton>
-      &nbsp;
+      <input
+        value={quantity}
+        disabled
+        className="h-[33px] w-[50px] px-3 py-2  border-l-0 border-r-0  opacity-[0px] m-0 border-gray-300 rounded-none text-[12px] text-center"
+      />
       <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <button
+        <Button
           aria-label="Increase quantity"
           name="increase-quantity"
           value={nextQuantity}
           disabled={!!isOptimistic}
+          variant="secondary"
+          size="sm"
+          className="rounded-l-none p-2"
         >
-          <span>&#43;</span>
-        </button>
+          <PlusIcon />
+        </Button>
       </CartLineUpdateButton>
-      &nbsp;
-      <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
+      {/* <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} /> */}
     </div>
   );
 }

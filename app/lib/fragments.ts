@@ -36,11 +36,11 @@ export const CART_QUERY_FRAGMENT = `#graphql
         title
         image {
           id
-          url
+          url (transform:  {
+            maxWidth: 200
+            maxHeight: 200
+          })
           altText
-          width
-          height
-
         }
         product {
           handle
