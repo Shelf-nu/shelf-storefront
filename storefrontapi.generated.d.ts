@@ -251,6 +251,44 @@ export type FooterQuery = {
   >;
 };
 
+export type MediaImageFragment = Pick<
+  StorefrontAPI.Image,
+  'url' | 'width' | 'altText' | 'height'
+>;
+
+export type TestimonialsFragment = {
+  testimonials: {
+    nodes: Array<
+      Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
+        content?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MetaobjectField, 'value'>
+        >;
+        name?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MetaobjectField, 'value'>
+        >;
+        postion?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.MetaobjectField, 'value'>
+        >;
+        image?: StorefrontAPI.Maybe<{
+          reference?: StorefrontAPI.Maybe<
+            {__typename: 'MediaImage'} & Pick<
+              StorefrontAPI.MediaImage,
+              'id'
+            > & {
+                image?: StorefrontAPI.Maybe<
+                  Pick<
+                    StorefrontAPI.Image,
+                    'url' | 'width' | 'altText' | 'height'
+                  >
+                >;
+              }
+          >;
+        }>;
+      }
+    >;
+  };
+};
+
 export type SitemapQueryVariables = StorefrontAPI.Exact<{
   urlLimits?: StorefrontAPI.InputMaybe<StorefrontAPI.Scalars['Int']['input']>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
@@ -353,50 +391,12 @@ export type FeaturedCollectionQuery = {
   };
 };
 
-export type MediaImageFragment = Pick<
-  StorefrontAPI.Image,
-  'url' | 'width' | 'altText' | 'height'
->;
-
-export type TestimonialsFragment = {
-  testimonials: {
-    nodes: Array<
-      Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
-        content?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'value'>
-        >;
-        name?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'value'>
-        >;
-        postion?: StorefrontAPI.Maybe<
-          Pick<StorefrontAPI.MetaobjectField, 'value'>
-        >;
-        image?: StorefrontAPI.Maybe<{
-          reference?: StorefrontAPI.Maybe<
-            {__typename: 'MediaImage'} & Pick<
-              StorefrontAPI.MediaImage,
-              'id'
-            > & {
-                image?: StorefrontAPI.Maybe<
-                  Pick<
-                    StorefrontAPI.Image,
-                    'url' | 'width' | 'altText' | 'height'
-                  >
-                >;
-              }
-          >;
-        }>;
-      }
-    >;
-  };
-};
-
-export type TestimonialsCollectionQueryVariables = StorefrontAPI.Exact<{
+export type HomepageContentQueryVariables = StorefrontAPI.Exact<{
   country?: StorefrontAPI.InputMaybe<StorefrontAPI.CountryCode>;
   language?: StorefrontAPI.InputMaybe<StorefrontAPI.LanguageCode>;
 }>;
 
-export type TestimonialsCollectionQuery = {
+export type HomepageContentQuery = {
   testimonials: {
     nodes: Array<
       Pick<StorefrontAPI.Metaobject, 'id' | 'handle' | 'type'> & {
@@ -1477,9 +1477,9 @@ interface GeneratedQueryTypes {
     return: FeaturedCollectionQuery;
     variables: FeaturedCollectionQueryVariables;
   };
-  '#graphql\n  fragment MediaImage on Image {\n    url\n    width\n    altText\n    height\n  }\n  fragment Testimonials on QueryRoot {\n    testimonials: metaobjects(type: "testimonials", first: 5) {\n      nodes {\n      ... on Metaobject {\n          id\n          handle\n          type\n          content: field(key: "content") { value }\n          name: field(key: "name") { value }\n          postion: field(key: "position_company") { value }\n          image: field(key: "image") { \n            reference {\n              ... on MediaImage {\n                id\n                __typename\n                image {\n                  ...MediaImage\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n  query TestimonialsCollection($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    ...Testimonials\n  }\n': {
-    return: TestimonialsCollectionQuery;
-    variables: TestimonialsCollectionQueryVariables;
+  '#graphql\n  query HomepageContent($country: CountryCode, $language: LanguageCode)\n    @inContext(country: $country, language: $language) {\n    ...Testimonials\n  }\n  #graphql\n  fragment Testimonials on QueryRoot {\n      testimonials: metaobjects(type: "testimonials", first: 5) {\n        nodes {\n        ... on Metaobject {\n            id\n            handle\n            type\n            content: field(key: "content") { value }\n            name: field(key: "name") { value }\n            postion: field(key: "position_company") { value }\n            image: field(key: "image") { \n              reference {\n                ... on MediaImage {\n                  id\n                  __typename\n                  image {\n                    ...MediaImage\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n\n  #graphql\n  fragment MediaImage on Image {\n    url\n    width\n    altText\n    height\n  }\n  \n\n': {
+    return: HomepageContentQuery;
+    variables: HomepageContentQueryVariables;
   };
   '#graphql\n  fragment PredictiveArticle on Article {\n    __typename\n    id\n    title\n    handle\n    blog {\n      handle\n    }\n    image {\n      url\n      altText\n      width\n      height\n    }\n    trackingParameters\n  }\n  fragment PredictiveCollection on Collection {\n    __typename\n    id\n    title\n    handle\n    image {\n      url\n      altText\n      width\n      height\n    }\n    trackingParameters\n  }\n  fragment PredictivePage on Page {\n    __typename\n    id\n    title\n    handle\n    trackingParameters\n  }\n  fragment PredictiveProduct on Product {\n    __typename\n    id\n    title\n    handle\n    trackingParameters\n    variants(first: 1) {\n      nodes {\n        id\n        image {\n          url\n          altText\n          width\n          height\n        }\n        price {\n          amount\n          currencyCode\n        }\n      }\n    }\n  }\n  fragment PredictiveQuery on SearchQuerySuggestion {\n    __typename\n    text\n    styledText\n    trackingParameters\n  }\n  query predictiveSearch(\n    $country: CountryCode\n    $language: LanguageCode\n    $limit: Int!\n    $limitScope: PredictiveSearchLimitScope!\n    $searchTerm: String!\n    $types: [PredictiveSearchType!]\n  ) @inContext(country: $country, language: $language) {\n    predictiveSearch(\n      limit: $limit,\n      limitScope: $limitScope,\n      query: $searchTerm,\n      types: $types,\n    ) {\n      articles {\n        ...PredictiveArticle\n      }\n      collections {\n        ...PredictiveCollection\n      }\n      pages {\n        ...PredictivePage\n      }\n      products {\n        ...PredictiveProduct\n      }\n      queries {\n        ...PredictiveQuery\n      }\n    }\n  }\n': {
     return: PredictiveSearchQuery;

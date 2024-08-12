@@ -189,3 +189,41 @@ export const FOOTER_QUERY = `#graphql
   }
   ${MENU_FRAGMENT}
 ` as const;
+
+export const MEDIA_IMAGE_FRAGMENT = `#graphql
+  fragment MediaImage on Image {
+    url
+    width
+    altText
+    height
+  }
+  
+` as const;
+
+export const PUBLISHED_TESTIMONIALS_FRAGMENT = `#graphql
+  fragment Testimonials on QueryRoot {
+      testimonials: metaobjects(type: "testimonials", first: 5) {
+        nodes {
+        ... on Metaobject {
+            id
+            handle
+            type
+            content: field(key: "content") { value }
+            name: field(key: "name") { value }
+            postion: field(key: "position_company") { value }
+            image: field(key: "image") { 
+              reference {
+                ... on MediaImage {
+                  id
+                  __typename
+                  image {
+                    ...MediaImage
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+` as const;

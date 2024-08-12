@@ -1,10 +1,16 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import {useLoaderData, Link, type MetaFunction} from '@remix-run/react';
-import {Image, Money} from '@shopify/hydrogen';
+import {useLoaderData, type MetaFunction, Await} from '@remix-run/react';
+import {Image} from '@shopify/hydrogen';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
 import {Button} from '~/components/button';
 import type {FeaturedCollectionFragment} from 'storefrontapi.generated';
 import {TestimonialsSlider} from '~/components/marketing/testimonials-slider';
+import {
+  MEDIA_IMAGE_FRAGMENT,
+  PUBLISHED_TESTIMONIALS_FRAGMENT,
+} from '~/lib/fragments';
+import {Suspense} from 'react';
+import {ProductCard} from '~/components/product/product-card';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle('Home')}];
@@ -45,8 +51,8 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
 function loadDeferredData({context}: LoaderFunctionArgs) {
-  const testimonials = context.storefront
-    .query(TESTIMONIALS_QUERY)
+  const homepageContent = context.storefront
+    .query(HOMEPAGE_CONTENT_QUERY)
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
@@ -54,17 +60,30 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
     });
 
   return {
-    testimonials,
+    homepageContent,
   };
 }
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  const {homepageContent} = data;
   return (
     <div className="home">
       <FeaturedCollection collection={data.featuredCollection} />
 
-      <TestimonialsSlider testimonials={data.testimonials} />
+      <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
+        <Await resolve={homepageContent}>
+          {(response) => {
+            return (
+              response?.testimonials && (
+                <TestimonialsSlider
+                  testimonials={response?.testimonials?.nodes || null}
+                />
+              )
+            );
+          }}
+        </Await>
+      </Suspense>
     </div>
   );
 }
@@ -130,50 +149,6 @@ function FeaturedCollection({
   );
 }
 
-export const ProductCard = ({
-  product,
-}: {
-  product: Pick<
-    FeaturedCollectionFragment['products']['nodes'][number],
-    'handle' | 'title' | 'priceRange' | 'images'
-  >;
-}) => {
-  const mainImage = product.images.nodes[0];
-  const hoverImage = product.images.nodes[1];
-
-  return (
-    <Link
-      to={`/products/${product.handle}`}
-      className="group product-card border border-gray-200 rounded-lg hover:!no-underline transition-all duration-500 ease-in-out"
-    >
-      <div className="relative h-auto aspect-square overflow-hidden">
-        {' '}
-        {/* Wrap images in a relative container */}
-        <Image
-          data={mainImage}
-          aspectRatio="1/1"
-          sizes="(min-width: 45em) 20vw, 50vw"
-          className="absolute inset-0 w-full h-full main-image transition-opacity duration-500 ease-in-out"
-        />
-        <Image
-          data={hoverImage}
-          aspectRatio="1/1"
-          sizes="(min-width: 45em) 20vw, 50vw"
-          className="absolute inset-0 w-full h-full hover-image opacity-0 scale-100 transition-all duration-500 ease-in-out transform group-hover:opacity-100 group-hover:scale-105"
-        />
-      </div>
-      <div className="p-5 text-center border-t border-t-gray-200">
-        <h4 className="font-medium text-[16px] leading-[20px] text-gray-900 ">
-          {product.title}
-        </h4>
-        <div className="text-gray-600 text-[16px] font-normal">
-          <Money data={product.priceRange.minVariantPrice} />
-        </div>
-      </div>
-    </Link>
-  );
-};
-
 const FEATURED_COLLECTION_FRAGMENT = `#graphql
   fragment FeaturedCollection on Collection {
     id
@@ -226,40 +201,11 @@ const FEATURED_COLLECTION_QUERY = `#graphql
   ${FEATURED_COLLECTION_FRAGMENT}
 ` as const;
 
-const TESTIMONIALS_QUERY = `#graphql
-  fragment MediaImage on Image {
-    url
-    width
-    altText
-    height
-  }
-  fragment Testimonials on QueryRoot {
-    testimonials: metaobjects(type: "testimonials", first: 5) {
-      nodes {
-      ... on Metaobject {
-          id
-          handle
-          type
-          content: field(key: "content") { value }
-          name: field(key: "name") { value }
-          postion: field(key: "position_company") { value }
-          image: field(key: "image") { 
-            reference {
-              ... on MediaImage {
-                id
-                __typename
-                image {
-                  ...MediaImage
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  query TestimonialsCollection($country: CountryCode, $language: LanguageCode)
+export const HOMEPAGE_CONTENT_QUERY = `#graphql
+  query HomepageContent($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     ...Testimonials
   }
+  ${PUBLISHED_TESTIMONIALS_FRAGMENT}
+  ${MEDIA_IMAGE_FRAGMENT}
 ` as const;
