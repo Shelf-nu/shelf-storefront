@@ -63,9 +63,9 @@ const Input = forwardRef(function Input(
   }: InputProps,
   ref,
 ) {
-  const iconClasses = tw(
-    'pointer-events-none absolute flex h-full items-center border-gray-300 px-[14px]',
-  );
+  // const iconClasses = tw(
+  //   'pointer-events-none absolute flex h-full items-center border-gray-300 px-[14px]',
+  // );
 
   const addonClasses = tw(
     'pointer-events-none flex items-center rounded-l-[4px] border-y border-l border-gray-300 bg-white px-[14px] text-gray-600',

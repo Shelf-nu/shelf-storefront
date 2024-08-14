@@ -35,6 +35,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
         <div aria-labelledby="cart-lines">
           <ul>
             {(cart?.lines?.nodes ?? []).map(
+              // @ts-ignore
               (line: OptimisticCartLine, index: number) => (
                 <CartLineItem
                   key={line.id}

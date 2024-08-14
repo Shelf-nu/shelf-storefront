@@ -5,10 +5,10 @@ import {useVariantUrl} from '~/lib/variants';
 import {Link} from '@remix-run/react';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
-import {QuantitySelector} from './product/quantity-selector';
 import {Button} from './button';
 import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
 import {tw} from '~/utils/tw';
+import {TrashIcon} from './icons';
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
@@ -59,15 +59,21 @@ export function CartLineItem({
           }}
           className="font-semibold text-sm text-gray-700 item-link block"
         >
-          {product.title} -{' '}
-          {selectedOptions.map((option) => (
-            <span key={option.name} className="text-[12px] text-gray-600">
-              <span className="font-semibold">{option.name}</span>:{' '}
-              {option.value}
-            </span>
-          ))}
+          <div className="flex gap-2">
+            <div>
+              {product.title}
+              {selectedOptions.map((option) => (
+                <div
+                  key={option.name}
+                  className="text-[12px] text-gray-600 font-normal"
+                >
+                  {option.value}
+                </div>
+              ))}
+            </div>
+          </div>
         </Link>
-        <div className="flex justify-between items-start mt-3">
+        <div className="flex justify-between items-center mt-3">
           <ProductPrice price={line?.cost?.totalAmount} />
 
           <CartLineQuantity line={line} />
@@ -89,39 +95,42 @@ function CartLineQuantity({line}: {line: OptimisticCartLine}) {
   const nextQuantity = Number((quantity + 1).toFixed(0));
 
   return (
-    <div className="cart-line-quantity ">
-      <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
-        <Button
-          aria-label="Decrease quantity"
-          disabled={quantity <= 1 || !!isOptimistic}
-          name="decrease-quantity"
-          value={prevQuantity}
-          variant="secondary"
-          size="sm"
-          className="rounded-r-none p-2"
-        >
-          <MinusIcon />
-        </Button>
-      </CartLineUpdateButton>
-      <input
-        value={quantity}
-        disabled
-        className="h-[33px] w-[50px] px-3 py-2  border-l-0 border-r-0  opacity-[0px] m-0 border-gray-300 rounded-none text-[12px] text-center"
-      />
-      <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
-        <Button
-          aria-label="Increase quantity"
-          name="increase-quantity"
-          value={nextQuantity}
-          disabled={!!isOptimistic}
-          variant="secondary"
-          size="sm"
-          className="rounded-l-none p-2"
-        >
-          <PlusIcon />
-        </Button>
-      </CartLineUpdateButton>
-      {/* <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} /> */}
+    <div className="flex gap-3 items-center">
+      <div className="cart-line-quantity ">
+        <CartLineUpdateButton lines={[{id: lineId, quantity: prevQuantity}]}>
+          <Button
+            aria-label="Decrease quantity"
+            disabled={quantity <= 1 || !!isOptimistic}
+            name="decrease-quantity"
+            value={prevQuantity}
+            variant="secondary"
+            size="sm"
+            className="rounded-r-none p-2"
+          >
+            <MinusIcon />
+          </Button>
+        </CartLineUpdateButton>
+        <input
+          value={quantity}
+          disabled
+          className="h-[33px] w-[50px] px-3 py-2  border-l-0 border-r-0  opacity-[0px] m-0 border-gray-300 rounded-none text-[12px] text-center"
+        />
+        <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
+          <Button
+            aria-label="Increase quantity"
+            name="increase-quantity"
+            value={nextQuantity}
+            disabled={!!isOptimistic}
+            variant="secondary"
+            size="sm"
+            className="rounded-l-none p-2"
+          >
+            <PlusIcon />
+          </Button>
+        </CartLineUpdateButton>
+        {/* <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} /> */}
+      </div>
+      <CartLineRemoveButton lineIds={[lineId]} disabled={!!line.isOptimistic} />
     </div>
   );
 }
@@ -144,8 +153,12 @@ function CartLineRemoveButton({
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button disabled={disabled} type="submit">
-        Remove
+      <button
+        disabled={disabled}
+        type="submit"
+        className="w-[16px] h-[16px] block"
+      >
+        <TrashIcon />
       </button>
     </CartForm>
   );

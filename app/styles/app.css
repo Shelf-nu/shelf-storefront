@@ -301,7 +301,7 @@ aside header {
   @apply border-b border-gray-200;
 }
 
-aside header h3 {
+aside h3 {
   margin: 0;
   @apply text-text-lg font-semibold;
 }
@@ -497,10 +497,6 @@ button.reset:hover:not(:has(> *)) {
   margin-top: 0.25rem;
 }
 
-.cart-subtotal {
-  align-items: center;
-  display: flex;
-}
 /*
 * --------------------------------------------------
 * components/Search

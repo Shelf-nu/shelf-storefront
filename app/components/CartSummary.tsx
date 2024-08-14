@@ -1,6 +1,9 @@
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
+import {tw} from '~/utils/tw';
+import Input from './form/input';
+import {Button} from './button';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -8,35 +11,57 @@ type CartSummaryProps = {
 };
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
-  const className =
-    layout === 'page' ? 'cart-summary-page' : 'cart-summary-aside z-50';
+  const isCartPage = layout === 'page';
 
   return (
-    <div aria-labelledby="cart-summary" className={className}>
-      <h4>Totals</h4>
-      <dl className="cart-subtotal">
-        <dt>Subtotal</dt>
-        <dd>
-          {cart.cost?.subtotalAmount?.amount ? (
-            <Money data={cart.cost?.subtotalAmount} />
-          ) : (
-            '-'
-          )}
-        </dd>
-      </dl>
+    <div
+      aria-labelledby="cart-summary"
+      className={tw(isCartPage ? 'cart-summary-page' : 'bg-white z-50 pt-3')}
+    >
+      <h3>Totals</h3>
+      <ul className="cart-subtotal my-3 [&>li]:flex [&>li]:gap-2">
+        <li>
+          <div className="font-semibold text-gray-800">Subtotal: </div>
+          <div className="font-normal">
+            {cart.cost?.subtotalAmount?.amount ? (
+              <Money data={cart.cost?.subtotalAmount} className="" />
+            ) : (
+              '-'
+            )}
+          </div>
+        </li>
+        <li>
+          <div className="font-semibold text-gray-800">Shipping: </div>
+          <div className="font-normal">Calculated at chekout</div>
+        </li>
+      </ul>
       <CartDiscounts discountCodes={cart.discountCodes} />
-      <CartCheckoutActions checkoutUrl={cart.checkoutUrl} />
+      {/* <div className="border-t my-6" /> */}
+      <CartCheckoutActions
+        checkoutUrl={cart.checkoutUrl}
+        isCartPage={isCartPage}
+      />
     </div>
   );
 }
-function CartCheckoutActions({checkoutUrl}: {checkoutUrl?: string}) {
+function CartCheckoutActions({
+  checkoutUrl,
+  isCartPage,
+}: {
+  checkoutUrl?: string;
+  isCartPage: boolean;
+}) {
   if (!checkoutUrl) return null;
 
   return (
-    <div>
-      <a href={checkoutUrl} target="_self">
-        <p>Continue to Checkout &rarr;</p>
-      </a>
+    <div className="mb-4">
+      <Button
+        to={checkoutUrl}
+        target="_self"
+        width={!isCartPage ? 'full' : undefined}
+      >
+        Continue to Checkout &rarr;
+      </Button>
       <br />
     </div>
   );
@@ -70,10 +95,19 @@ function CartDiscounts({
 
       {/* Show an input to apply a discount */}
       <UpdateDiscountForm discountCodes={codes}>
-        <div>
-          <input type="text" name="discountCode" placeholder="Discount code" />
-          &nbsp;
-          <button type="submit">Apply</button>
+        <div className="flex gap-2 my-2">
+          <Input
+            type="text"
+            name="discountCode"
+            placeholder="Discount code"
+            label={'Discount code'}
+            hideLabel
+            inputClassName="my-0"
+            className="flex-1"
+          />
+          <Button type="submit" variant="secondary">
+            Apply
+          </Button>
         </div>
       </UpdateDiscountForm>
     </div>
