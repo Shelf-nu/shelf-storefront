@@ -22,6 +22,7 @@ export default {
         executionContext,
       );
 
+      console.log('appLoadContext', appLoadContext.customerAccount);
       /**
        * Create a Remix request handler and pass
        * Hydrogen's Storefront client to the loader context.

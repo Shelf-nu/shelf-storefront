@@ -68,7 +68,7 @@ export default function Page() {
 
   return (
     <div className="page">
-      <div className="container">
+      <div className="container my-16">
         <header>
           <h1 className="mx-auto max-w-[400px]">{page.title}</h1>
         </header>
@@ -103,7 +103,9 @@ export default function Page() {
               inputType="textarea"
             />
 
-            <Button type="submit">Submit</Button>
+            <Button type="submit" className="mt-2">
+              Submit
+            </Button>
           </Form>
         )}
       </div>

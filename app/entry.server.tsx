@@ -16,6 +16,7 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    connectSrc: ['https://exciting-day-jenny-smart.trycloudflare.com/'],
     // scriptSrc: ['https://assets.mailerlite.com/js/universal.js'],
     // scriptSrcElem: ['https://assets.mailerlite.com/js/universal.js'],
   });
