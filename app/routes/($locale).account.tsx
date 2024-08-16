@@ -35,7 +35,7 @@ export default function AccountLayout() {
     : 'Account Details';
 
   return (
-    <div className="account">
+    <div className="account container pb-20">
       <h1>{heading}</h1>
       <br />
       <AccountMenu />

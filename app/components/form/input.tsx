@@ -14,8 +14,9 @@ export interface InputProps
   /** Type of the input. Default is input. Possible options are:
    * - input
    * - textarea
+   * - checkbox
    */
-  inputType?: 'input' | 'textarea';
+  inputType?: 'input' | 'textarea' | 'checkbox';
 
   /** Weather the label is hidden */
   hideLabel?: boolean;
@@ -79,6 +80,7 @@ const Input = forwardRef(function Input(
     /** Add or remove classes depending on weather we use an icon or addOn */
     addOn ? 'rounded-l-none rounded-r-[4px]' : 'rounded-[4px]',
     hasAttachedButton ? tw('rounded-r-none') : undefined,
+    inputType === 'checkbox' ? tw('inline-block w-auto w-[18px]') : undefined,
     inputClassName,
   );
 
@@ -109,7 +111,15 @@ const Input = forwardRef(function Input(
   }
 
   return (
-    <label className={tw('relative flex flex-col', className)}>
+    <label
+      className={tw(
+        'relative flex flex-col',
+        inputType === 'checkbox'
+          ? 'flex-row justify-between items-center'
+          : undefined,
+        className,
+      )}
+    >
       {/* Label */}
       <InnerLabel hideLg={hideLabel} required={required}>
         {label}
