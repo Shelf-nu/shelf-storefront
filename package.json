@@ -11,7 +11,8 @@
     "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.ts,.jsx,.tsx .",
     "typecheck": "tsc --noEmit",
     "codegen": "shopify hydrogen codegen",
-    "deploy": "shopify hydrogen deploy"
+    "deploy": "shopify hydrogen deploy",
+    "sync:env": "shopify hydrogen env pull"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
