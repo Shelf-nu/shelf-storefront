@@ -6,13 +6,8 @@ export const ORDER_ITEM_FRAGMENT = `#graphql
       currencyCode
     }
     financialStatus
-    fulfillments(first: 1) {
-      nodes {
-        status
-      }
-    }
     id
-    number
+    name
     processedAt
   }
 ` as const;

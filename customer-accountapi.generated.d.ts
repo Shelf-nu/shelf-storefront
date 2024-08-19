@@ -378,23 +378,17 @@ export type OrderQuery = {
 
 export type OrderItemFragment = Pick<
   CustomerAccountAPI.Order,
-  'financialStatus' | 'id' | 'number' | 'processedAt'
-> & {
-  totalPrice: Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>;
-  fulfillments: {nodes: Array<Pick<CustomerAccountAPI.Fulfillment, 'status'>>};
-};
+  'financialStatus' | 'id' | 'name' | 'processedAt'
+> & {totalPrice: Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>};
 
 export type CustomerOrdersFragment = {
   orders: {
     nodes: Array<
       Pick<
         CustomerAccountAPI.Order,
-        'financialStatus' | 'id' | 'number' | 'processedAt'
+        'financialStatus' | 'id' | 'name' | 'processedAt'
       > & {
         totalPrice: Pick<CustomerAccountAPI.MoneyV2, 'amount' | 'currencyCode'>;
-        fulfillments: {
-          nodes: Array<Pick<CustomerAccountAPI.Fulfillment, 'status'>>;
-        };
       }
     >;
     pageInfo: Pick<
@@ -425,15 +419,12 @@ export type CustomerOrdersQuery = {
       nodes: Array<
         Pick<
           CustomerAccountAPI.Order,
-          'financialStatus' | 'id' | 'number' | 'processedAt'
+          'financialStatus' | 'id' | 'name' | 'processedAt'
         > & {
           totalPrice: Pick<
             CustomerAccountAPI.MoneyV2,
             'amount' | 'currencyCode'
           >;
-          fulfillments: {
-            nodes: Array<Pick<CustomerAccountAPI.Fulfillment, 'status'>>;
-          };
         }
       >;
       pageInfo: Pick<
@@ -478,7 +469,7 @@ interface GeneratedQueryTypes {
     return: OrderQuery;
     variables: OrderQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment CustomerOrders on Customer {\n    orders(\n      sortKey: PROCESSED_AT,\n      reverse: true,\n      first: $first,\n      last: $last,\n      before: $startCursor,\n      after: $endCursor\n    ) {\n      nodes {\n        ...OrderItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n  #graphql\n  fragment OrderItem on Order {\n    totalPrice {\n      amount\n      currencyCode\n    }\n    financialStatus\n    fulfillments(first: 1) {\n      nodes {\n        status\n      }\n    }\n    id\n    number\n    processedAt\n  }\n\n\n  query CustomerOrders(\n    $endCursor: String\n    $first: Int\n    $last: Int\n    $startCursor: String\n  ) {\n    customer {\n      ...CustomerOrders\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment CustomerOrders on Customer {\n    orders(\n      sortKey: PROCESSED_AT,\n      reverse: true,\n      first: $first,\n      last: $last,\n      before: $startCursor,\n      after: $endCursor\n    ) {\n      nodes {\n        ...OrderItem\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n  #graphql\n  fragment OrderItem on Order {\n    totalPrice {\n      amount\n      currencyCode\n    }\n    financialStatus\n    id\n    name\n    processedAt\n  }\n\n\n  query CustomerOrders(\n    $endCursor: String\n    $first: Int\n    $last: Int\n    $startCursor: String\n  ) {\n    customer {\n      ...CustomerOrders\n    }\n  }\n': {
     return: CustomerOrdersQuery;
     variables: CustomerOrdersQueryVariables;
   };

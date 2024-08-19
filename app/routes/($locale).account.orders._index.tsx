@@ -1,16 +1,13 @@
 import {Link, useLoaderData, type MetaFunction} from '@remix-run/react';
-import {
-  Money,
-  Pagination,
-  getPaginationVariables,
-  flattenConnection,
-} from '@shopify/hydrogen';
-import {json, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import {Money, Pagination, getPaginationVariables} from '@shopify/hydrogen';
+import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {CUSTOMER_ORDERS_QUERY} from '~/graphql/customer-account/CustomerOrdersQuery';
 import type {
   CustomerOrdersFragment,
   OrderItemFragment,
 } from 'customer-accountapi.generated';
+import {Table, Td, Th, Tr} from '~/components/layout/table';
+import {Button} from '~/components/button';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders'}];
@@ -40,6 +37,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 export default function Orders() {
   const {customer} = useLoaderData<{customer: CustomerOrdersFragment}>();
   const {orders} = customer;
+
   return (
     <div className="orders">
       {orders.nodes.length ? <OrdersTable orders={orders} /> : <EmptyOrders />}
@@ -58,9 +56,23 @@ function OrdersTable({orders}: Pick<CustomerOrdersFragment, 'orders'>) {
                 <PreviousLink>
                   {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
                 </PreviousLink>
-                {nodes.map((order) => {
-                  return <OrderItem key={order.id} order={order} />;
-                })}
+                <Table className="border">
+                  <thead>
+                    <Tr>
+                      <Th>Order</Th>
+                      <Th>Date</Th>
+                      <Th>Status</Th>
+                      <Th className="text-right">Total</Th>
+                      <Th className="max-w-full whitespace-nowrap" />
+                    </Tr>
+                  </thead>
+                  <tbody>
+                    {nodes.map((order) => {
+                      return <OrderItem key={order.id} order={order} />;
+                    })}
+                  </tbody>
+                </Table>
+
                 <NextLink>
                   {isLoading ? 'Loading...' : <span>Load more ↓</span>}
                 </NextLink>
@@ -88,20 +100,23 @@ function EmptyOrders() {
 }
 
 function OrderItem({order}: {order: OrderItemFragment}) {
-  const fulfillmentStatus = flattenConnection(order.fulfillments)[0]?.status;
   return (
-    <>
-      <fieldset>
+    <Tr>
+      <Td>
         <Link to={`/account/orders/${btoa(order.id)}`}>
-          <strong>#{order.number}</strong>
+          <strong>{order.name}</strong>
         </Link>
-        <p>{new Date(order.processedAt).toDateString()}</p>
-        <p>{order.financialStatus}</p>
-        {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
+      </Td>
+      <Td>{new Date(order.processedAt).toDateString()}</Td>
+      <Td>{order.financialStatus}</Td>
+      <Td className="text-right">
         <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
-      </fieldset>
-      <br />
-    </>
+      </Td>
+      <Td className="whitespace-nowrap w-1">
+        <Button variant="link" to={`/account/orders/${btoa(order.id)}`}>
+          View Order →
+        </Button>
+      </Td>
+    </Tr>
   );
 }

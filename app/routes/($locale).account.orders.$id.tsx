@@ -3,6 +3,9 @@ import {useLoaderData, type MetaFunction} from '@remix-run/react';
 import {Money, Image, flattenConnection} from '@shopify/hydrogen';
 import type {OrderLineItemFullFragment} from 'customer-accountapi.generated';
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
+import {Table, Td, Th, Tr} from '~/components/layout/table';
+import {tw} from '~/utils/tw';
+import {Button} from '~/components/button';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Order ${data?.order?.name}`}];
@@ -29,7 +32,8 @@ export async function loader({params, context}: LoaderFunctionArgs) {
 
   const lineItems = flattenConnection(order.lineItems);
   const discountApplications = flattenConnection(order.discountApplications);
-  const fulfillmentStatus = flattenConnection(order.fulfillments)[0].status;
+
+  // const fulfillmentStatus = flattenConnection(order.fulfillments)[0].status;
 
   const firstDiscount = discountApplications[0]?.value;
 
@@ -45,7 +49,8 @@ export async function loader({params, context}: LoaderFunctionArgs) {
     lineItems,
     discountValue,
     discountPercentage,
-    fulfillmentStatus,
+    // financialStatus: order.financialStatus,
+    // fulfillmentStatus,
   });
 }
 
@@ -55,21 +60,22 @@ export default function OrderRoute() {
     lineItems,
     discountValue,
     discountPercentage,
-    fulfillmentStatus,
+    // fulfillmentStatus,
   } = useLoaderData<typeof loader>();
+  const labelClasses = `font-medium`;
   return (
     <div className="account-order">
       <h2>Order {order.name}</h2>
       <p>Placed on {new Date(order.processedAt!).toDateString()}</p>
       <br />
       <div>
-        <table>
-          <thead>
+        <Table className="border">
+          <thead className="[&_th]:font-medium [&_th]:text-gray-800">
             <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Total</th>
+              <Th scope="col">Product</Th>
+              <Th scope="col">Price</Th>
+              <Th scope="col">Quantity</Th>
+              <Th scope="col">Total</Th>
             </tr>
           </thead>
           <tbody>
@@ -81,87 +87,90 @@ export default function OrderRoute() {
           <tfoot>
             {((discountValue && discountValue.amount) ||
               discountPercentage) && (
-              <tr>
-                <th scope="row" colSpan={3}>
-                  <p>Discounts</p>
-                </th>
-                <th scope="row">
-                  <p>Discounts</p>
-                </th>
-                <td>
+              <Tr>
+                <Th scope="row" className={tw(labelClasses)}>
+                  Discounts
+                </Th>
+                <Th scope="row" className={tw(labelClasses)}>
+                  Discounts
+                </Th>
+                <Td>
                   {discountPercentage ? (
                     <span>-{discountPercentage}% OFF</span>
                   ) : (
                     discountValue && <Money data={discountValue!} />
                   )}
-                </td>
-              </tr>
+                </Td>
+              </Tr>
             )}
-            <tr>
-              <th scope="row" colSpan={3}>
-                <p>Subtotal</p>
-              </th>
-              <th scope="row">
-                <p>Subtotal</p>
-              </th>
-              <td>
+            <Tr>
+              <Td scope="row" className={tw(labelClasses)}>
+                Subtotal
+              </Td>
+              <Td />
+
+              <Td scope="row" className={tw(labelClasses)}>
+                Subtotal
+              </Td>
+              <Td>
                 <Money data={order.subtotal!} />
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" colSpan={3}>
+              </Td>
+            </Tr>
+            <Tr>
+              <Td scope="row" className={tw(labelClasses)}>
                 Tax
-              </th>
-              <th scope="row">
-                <p>Tax</p>
-              </th>
-              <td>
+              </Td>
+              <Td />
+              <Td scope="row" className={tw(labelClasses)}>
+                Tax
+              </Td>
+              <Td>
                 <Money data={order.totalTax!} />
-              </td>
-            </tr>
-            <tr>
-              <th scope="row" colSpan={3}>
+              </Td>
+            </Tr>
+            <Tr>
+              <Td scope="row" className={tw(labelClasses, ' text-[18px]')}>
                 Total
-              </th>
-              <th scope="row">
-                <p>Total</p>
-              </th>
-              <td>
+              </Td>
+              <Td />
+              <Td scope="row" className={tw(labelClasses)}>
+                Total
+              </Td>
+              <Td>
                 <Money data={order.totalPrice!} />
-              </td>
-            </tr>
+              </Td>
+            </Tr>
           </tfoot>
-        </table>
-        <div>
+        </Table>
+        <div className="mt-4">
           <h3>Shipping Address</h3>
           {order?.shippingAddress ? (
-            <address>
-              <p>{order.shippingAddress.name}</p>
-              {order.shippingAddress.formatted ? (
-                <p>{order.shippingAddress.formatted}</p>
-              ) : (
-                ''
-              )}
-              {order.shippingAddress.formattedArea ? (
-                <p>{order.shippingAddress.formattedArea}</p>
-              ) : (
-                ''
-              )}
+            <address className="mt-2">
+              {order.shippingAddress.formatted.map((line, index) => (
+                <div key={line} className="text-[16px] not-italic font-normal">
+                  {line}
+                </div>
+              ))}
             </address>
           ) : (
             <p>No shipping address defined</p>
           )}
-          <h3>Status</h3>
+          {/* <h3>Status</h3>
           <div>
-            <p>{fulfillmentStatus}</p>
-          </div>
+            <p>{order.financialStatus}</p>
+          </div> */}
         </div>
       </div>
       <br />
       <p>
-        <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
-          View Order Status →
-        </a>
+        <Button
+          target="_blank"
+          to={order.statusPageUrl}
+          variant="secondary"
+          rel="noreferrer"
+        >
+          View Order Status
+        </Button>
       </p>
     </div>
   );
@@ -169,27 +178,41 @@ export default function OrderRoute() {
 
 function OrderLineRow({lineItem}: {lineItem: OrderLineItemFullFragment}) {
   return (
-    <tr key={lineItem.id}>
-      <td>
-        <div>
+    <Tr key={lineItem.id}>
+      <Td>
+        <div className="flex gap-3">
           {lineItem?.image && (
             <div>
-              <Image data={lineItem.image} width={96} height={96} />
+              <Image
+                data={lineItem.image}
+                width={96}
+                height={96}
+                className="border rounded-md"
+              />
             </div>
           )}
           <div>
-            <p>{lineItem.title}</p>
+            <div className="font-medium">{lineItem.title}</div>
             <small>{lineItem.variantTitle}</small>
           </div>
         </div>
-      </td>
-      <td>
+      </Td>
+      <Td>
         <Money data={lineItem.price!} />
-      </td>
-      <td>{lineItem.quantity}</td>
-      <td>
-        <Money data={lineItem.totalDiscount!} />
-      </td>
-    </tr>
+      </Td>
+      <Td>{lineItem.quantity}</Td>
+      <Td>
+        <Money
+          data={
+            {
+              amount: String(
+                Number(lineItem.price?.amount) * lineItem.quantity,
+              ),
+              currencyCode: lineItem.price?.currencyCode,
+            }!
+          }
+        />
+      </Td>
+    </Tr>
   );
 }
