@@ -38,7 +38,7 @@ export default function AccountLayout() {
 
   return (
     <div className="account container pb-20">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-center">
         <h1>{heading}</h1>
         <Logout />
       </div>
