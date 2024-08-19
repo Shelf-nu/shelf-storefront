@@ -1,6 +1,8 @@
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Form, NavLink, Outlet, useLoaderData} from '@remix-run/react';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
+import HorizontalTabs from '~/components/layout/horizontal-tabs';
+import {Button} from '~/components/button';
 
 export function shouldRevalidate() {
   return true;
@@ -36,53 +38,39 @@ export default function AccountLayout() {
 
   return (
     <div className="account container pb-20">
-      <h1>{heading}</h1>
-      <br />
+      <div className="flex flex-row justify-between">
+        <h1>{heading}</h1>
+        <Logout />
+      </div>
       <AccountMenu />
-      <br />
-      <br />
       <Outlet context={{customer}} />
     </div>
   );
 }
 
 function AccountMenu() {
-  function isActiveStyle({
-    isActive,
-    isPending,
-  }: {
-    isActive: boolean;
-    isPending: boolean;
-  }) {
-    return {
-      fontWeight: isActive ? 'bold' : undefined,
-      color: isPending ? 'grey' : 'black',
-    };
-  }
-
   return (
-    <nav role="navigation">
-      <NavLink to="/account/orders" style={isActiveStyle}>
-        Orders &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Profile &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
-        &nbsp; Addresses &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <Logout />
-    </nav>
+    <HorizontalTabs
+      items={[
+        {to: '/account/orders', content: 'Orders'},
+        {to: '/account/profile', content: 'Profile'},
+        {to: '/account/addresses', content: 'Addresses'},
+      ]}
+      className="pl-0 ml-0"
+    />
   );
 }
 
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+      <Button
+        type="submit"
+        variant="link"
+        className="text-gray-800 font-normal"
+      >
+        Sign out
+      </Button>
     </Form>
   );
 }

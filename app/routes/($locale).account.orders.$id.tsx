@@ -32,7 +32,6 @@ export async function loader({params, context}: LoaderFunctionArgs) {
 
   const lineItems = flattenConnection(order.lineItems);
   const discountApplications = flattenConnection(order.discountApplications);
-
   // const fulfillmentStatus = flattenConnection(order.fulfillments)[0].status;
 
   const firstDiscount = discountApplications[0]?.value;
@@ -49,7 +48,6 @@ export async function loader({params, context}: LoaderFunctionArgs) {
     lineItems,
     discountValue,
     discountPercentage,
-    // financialStatus: order.financialStatus,
     // fulfillmentStatus,
   });
 }
@@ -75,7 +73,9 @@ export default function OrderRoute() {
               <Th scope="col">Product</Th>
               <Th scope="col">Price</Th>
               <Th scope="col">Quantity</Th>
-              <Th scope="col">Total</Th>
+              <Th scope="col" className="text-right">
+                Total
+              </Th>
             </tr>
           </thead>
           <tbody>
@@ -112,7 +112,7 @@ export default function OrderRoute() {
               <Td scope="row" className={tw(labelClasses)}>
                 Subtotal
               </Td>
-              <Td>
+              <Td className="text-right">
                 <Money data={order.subtotal!} />
               </Td>
             </Tr>
@@ -124,7 +124,7 @@ export default function OrderRoute() {
               <Td scope="row" className={tw(labelClasses)}>
                 Tax
               </Td>
-              <Td>
+              <Td className="text-right">
                 <Money data={order.totalTax!} />
               </Td>
             </Tr>
@@ -136,7 +136,7 @@ export default function OrderRoute() {
               <Td scope="row" className={tw(labelClasses)}>
                 Total
               </Td>
-              <Td>
+              <Td className="text-right">
                 <Money data={order.totalPrice!} />
               </Td>
             </Tr>
@@ -201,7 +201,7 @@ function OrderLineRow({lineItem}: {lineItem: OrderLineItemFullFragment}) {
         <Money data={lineItem.price!} />
       </Td>
       <Td>{lineItem.quantity}</Td>
-      <Td>
+      <Td className="text-right">
         <Money
           data={
             {

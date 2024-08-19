@@ -552,6 +552,20 @@ button.reset:hover:not(:has(> *)) {
 
 /*
 * --------------------------------------------------
+* components/horizontal-tabs
+* --------------------------------------------------
+*/
+.horizontal-menu {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.horizontal-menu::-webkit-scrollbar {
+  display: none;
+}
+
+/*
+* --------------------------------------------------
 * routes/__index
 * --------------------------------------------------
 */
