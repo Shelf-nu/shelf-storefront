@@ -58,7 +58,6 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
-    // {rel: 'javascript', href: 'https://assets.mailerlite.com/js/universal.js'},
   ];
 }
 
@@ -84,6 +83,7 @@ export async function loader(args: LoaderFunctionArgs) {
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
     },
     MAILERLITE_ACCOUNT: env.MAILERLITE_ACCOUNT,
+    STORE_URL: env.STORE_URL,
   });
 }
 

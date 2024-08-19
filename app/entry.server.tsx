@@ -16,9 +16,21 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    connectSrc: ['https://exciting-day-jenny-smart.trycloudflare.com/'],
-    // scriptSrc: ['https://assets.mailerlite.com/js/universal.js'],
-    // scriptSrcElem: ['https://assets.mailerlite.com/js/universal.js'],
+    // connectSrc: [
+    //   "'self'",
+    //   'https://cdn.shopify.com',
+    //   'https://cafe-landing-by-spectrum.trycloudflare.com',
+    // ],
+    // // connectSrc: ['https://checkout.shelf.nu'],
+    // scriptSrc: [
+    //   "'self'",
+    //   // "'unsafe-inline'",
+    //   // "'unsafe-eval'",
+    //   'https://cafe-landing-by-spectrum.trycloudflare.com',
+    //   'https://cdn.shopify.com',
+    //   'https://shopify.com',
+    // ],
+    // scriptSrcElem: ["'self'", 'https://cdn.shopify.com', 'https://shopify.com'],
   });
 
   const body = await renderToReadableStream(
@@ -40,7 +52,7 @@ export default async function handleRequest(
   }
 
   responseHeaders.set('Content-Type', 'text/html');
-  // responseHeaders.set('Content-Security-Policy', header);
+  responseHeaders.set('Content-Security-Policy', header);
 
   return new Response(body, {
     headers: responseHeaders,

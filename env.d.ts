@@ -37,6 +37,7 @@ declare global {
     PUBLIC_CUSTOMER_ACCOUNT_API_URL: string;
     PUBLIC_CHECKOUT_DOMAIN: string;
     MAILERLITE_ACCOUNT: string;
+    STORE_URL: string;
   }
 
   /**
