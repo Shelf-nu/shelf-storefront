@@ -11,26 +11,21 @@ export default async function handleRequest(
   remixContext: EntryContext,
   context: AppLoadContext,
 ) {
+  const defHosts = [
+    '*.shelf.nu',
+    '*.shopify.com',
+    '*.myshopify.com',
+    'https://cafe-landing-by-spectrum.trycloudflare.com', // Localhost tunnel
+  ];
+
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    // connectSrc: [
-    //   "'self'",
-    //   'https://cdn.shopify.com',
-    //   'https://cafe-landing-by-spectrum.trycloudflare.com',
-    // ],
-    // // connectSrc: ['https://checkout.shelf.nu'],
-    // scriptSrc: [
-    //   "'self'",
-    //   // "'unsafe-inline'",
-    //   // "'unsafe-eval'",
-    //   'https://cafe-landing-by-spectrum.trycloudflare.com',
-    //   'https://cdn.shopify.com',
-    //   'https://shopify.com',
-    // ],
-    // scriptSrcElem: ["'self'", 'https://cdn.shopify.com', 'https://shopify.com'],
+    // defaultSrc: ['data:', ...defHosts],
+    // connectSrc: ['vimeo.com', '*.google-analytics.com', ...defHosts],
+    // styleSrc: defHosts,
   });
 
   const body = await renderToReadableStream(
