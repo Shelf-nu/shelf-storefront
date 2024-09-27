@@ -54,7 +54,7 @@ function FooterMenu({
   return (
     <div className="container">
       <nav
-        className="flex gap-8 items-center justify-center  my-12 font-semibold"
+        className="flex flex-col md:flex-row gap-8 items-center justify-center  my-12 font-semibold"
         role="navigation"
       >
         {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {

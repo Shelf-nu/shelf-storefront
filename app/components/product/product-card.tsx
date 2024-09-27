@@ -16,7 +16,7 @@ export const ProductCard = ({
   return (
     <Link
       to={`/products/${product.handle}`}
-      className="group product-card border border-gray-200 rounded-lg hover:!no-underline transition-all duration-500 ease-in-out"
+      className="group max-w-full product-card border border-gray-200 rounded-lg hover:!no-underline transition-all duration-500 ease-in-out"
     >
       <div className="relative h-auto aspect-square overflow-hidden">
         {' '}

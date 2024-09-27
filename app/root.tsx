@@ -19,6 +19,7 @@ import fontsStylesheetUrl from './styles/fonts.css?url';
 
 import {PageLayout} from '~/components/PageLayout';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {CUSTOMER_DETAILS_QUERY} from './graphql/customer-account/CustomerDetailsQuery';
 
 export type RootLoader = typeof loader;
 
@@ -117,6 +118,8 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
 function loadDeferredData({context}: LoaderFunctionArgs) {
   const {storefront, customerAccount, cart} = context;
 
+  const customerData = context.customerAccount.query(CUSTOMER_DETAILS_QUERY);
+
   // defer the footer query (below the fold)
   const footer = storefront
     .query(FOOTER_QUERY, {
@@ -133,6 +136,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
   return {
     cart: cart.get(),
     isLoggedIn: customerAccount.isLoggedIn(),
+    customerData,
     footer,
   };
 }

@@ -79,8 +79,18 @@ export default function Collection() {
   return (
     <div className="container">
       <div className="collection">
-        <h1>{collection.title}</h1>
-        <p className="collection-description">{collection.description}</p>
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div>
+            <h1>{collection.title}</h1>
+            <p className="collection-description">{collection.description}</p>
+          </div>
+          <img
+            src="/images/collection-cover-image-optimized.png"
+            alt="Collection cover"
+            className="md:h-[250px] mt-2"
+          />
+        </div>
+
         <Pagination connection={collection.products}>
           {({nodes, isLoading, PreviousLink, NextLink}) => (
             <>

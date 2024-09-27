@@ -1,9 +1,10 @@
 import {Suspense} from 'react';
-import {Await, NavLink} from '@remix-run/react';
+import {Await, NavLink, useRouteLoaderData} from '@remix-run/react';
 import {type CartViewPayload, RichText, useAnalytics} from '@shopify/hydrogen';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
-import {ShoppingCartIcon} from './icons';
+import {SearchIcon, ShoppingCartIcon, UserCheckIcon, UserIcon} from './icons';
+import type {RootLoader} from '~/root';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -120,14 +121,6 @@ export function HeaderMenu({
           </NavLink>
         );
       })}
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
-        <Suspense fallback="Sign in">
-          <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
-          </Await>
-        </Suspense>
-      </NavLink>
-      <SearchToggle />
     </nav>
   );
 }
@@ -136,8 +129,60 @@ function HeaderCtas({
   isLoggedIn,
   cart,
 }: Pick<HeaderProps, 'isLoggedIn' | 'cart'>) {
+  const data = useRouteLoaderData<RootLoader>('root');
+
   return (
-    <nav className="header-ctas" role="navigation">
+    <nav
+      className="header-ctas items-center justify-center gap-4 flex "
+      role="navigation"
+    >
+      <NavLink
+        prefetch="intent"
+        to="/account"
+        style={activeLinkStyle}
+        className={'whitespace-nowrap'}
+      >
+        <Suspense fallback="Sign in">
+          <Await resolve={isLoggedIn} errorElement="Sign in">
+            {(isLoggedIn) =>
+              isLoggedIn ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-primary w-4 h-auto relative block">
+                    <UserCheckIcon />
+                  </span>
+                  <span className="text-gray-600">
+                    <Suspense fallback="User">
+                      <Await
+                        resolve={data?.customerData}
+                        errorElement="Sign in"
+                      >
+                        {(customerData) => {
+                          if (!customerData) {
+                            return null;
+                          }
+                          return (
+                            <span className="text-gray-600 leading-6 font-medium">
+                              {customerData.data.customer.firstName}
+                            </span>
+                          );
+                        }}
+                      </Await>
+                    </Suspense>
+                  </span>
+                </div>
+              ) : (
+                <div
+                  className="w-5 h-auto text-gray-600 relative"
+                  title="Sign in"
+                >
+                  <UserIcon />
+                </div>
+              )
+            }
+          </Await>
+        </Suspense>
+      </NavLink>
+      <SearchToggle />
       <HeaderMenuMobileToggle />
       <CartToggle cart={cart} />
     </nav>
@@ -159,8 +204,11 @@ function HeaderMenuMobileToggle() {
 function SearchToggle() {
   const {open} = useAside();
   return (
-    <button className="reset" onClick={() => open('search')}>
-      Search
+    <button
+      className="reset w-5 h-auto text-gray-600 relative"
+      onClick={() => open('search')}
+    >
+      <SearchIcon />
     </button>
   );
 }
