@@ -23,9 +23,8 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    // defaultSrc: ['data:', ...defHosts],
-    // connectSrc: ['vimeo.com', '*.google-analytics.com', ...defHosts],
-    // styleSrc: defHosts,
+    styleSrc: ["'self'", 'https://cdn.shopify.com', context.env.STORE_URL],
+    scriptSrc: ["'self'", 'https://cdn.shopify.com', context.env.STORE_URL],
   });
 
   const body = await renderToReadableStream(
