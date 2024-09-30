@@ -23,8 +23,6 @@ export default async function handleRequest(
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
-    // styleSrc: ["'self'", 'https://cdn.shopify.com', context.env.STORE_URL],
-    // scriptSrc: ["'self'", 'https://cdn.shopify.com', context.env.STORE_URL],
   });
 
   const body = await renderToReadableStream(
@@ -46,7 +44,7 @@ export default async function handleRequest(
   }
 
   responseHeaders.set('Content-Type', 'text/html');
-  responseHeaders.set('Content-Security-Policy', header);
+  // responseHeaders.set('Content-Security-Policy', header);
 
   return new Response(body, {
     headers: responseHeaders,

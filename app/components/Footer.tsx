@@ -17,7 +17,7 @@ export function Footer({
 }: FooterProps) {
   return (
     <footer className="border-t pt-20">
-      {/* <NewsletterForm /> */}
+      <NewsletterForm />
       <Suspense>
         <Await resolve={footerPromise}>
           {(footer) => {

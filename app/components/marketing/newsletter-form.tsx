@@ -11,7 +11,6 @@ export function NewsletterForm() {
 
 function El() {
   const data = useRouteLoaderData<RootLoader>('root');
-
   useEffect(() => {
     if (document && data && data.MAILERLITE_ACCOUNT) {
       const js = `(function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
