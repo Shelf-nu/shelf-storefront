@@ -10,6 +10,7 @@ import {
   ScrollRestoration,
   isRouteErrorResponse,
   type ShouldRevalidateFunction,
+  LiveReload,
 } from '@remix-run/react';
 import favicon from '~/assets/favicon.svg';
 import resetStyles from '~/styles/reset.css?url';
@@ -118,7 +119,14 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
 function loadDeferredData({context}: LoaderFunctionArgs) {
   const {storefront, customerAccount, cart} = context;
 
-  const customerData = context.customerAccount.query(CUSTOMER_DETAILS_QUERY);
+  const customerData = context.customerAccount
+    .query(CUSTOMER_DETAILS_QUERY)
+    .then((data) => data)
+    .catch((error) => {
+      // Log query errors, but don't throw them so the page can still render
+      console.error(error);
+      return null;
+    });
 
   // defer the footer query (below the fold)
   const footer = storefront
@@ -128,6 +136,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         footerMenuHandle: 'footer', // Adjust to your footer menu handle
       },
     })
+    .then((data) => data)
     .catch((error) => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);

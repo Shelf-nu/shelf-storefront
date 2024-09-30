@@ -1,6 +1,4 @@
-import {Await, Link} from '@remix-run/react';
-import {Image, MediaFile, Money} from '@shopify/hydrogen';
-import {Suspense} from 'react';
+import {MediaFile} from '@shopify/hydrogen';
 import {
   Carousel,
   CarouselContent,

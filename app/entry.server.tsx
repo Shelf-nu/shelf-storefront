@@ -11,18 +11,21 @@ export default async function handleRequest(
   remixContext: EntryContext,
   context: AppLoadContext,
 ) {
-  const defHosts = [
-    '*.shelf.nu',
-    '*.shopify.com',
-    '*.myshopify.com',
-    'https://cafe-landing-by-spectrum.trycloudflare.com', // Localhost tunnel
-  ];
+  // const defHosts = [
+  //   '*.shelf.nu',
+  //   '*.shopify.com',
+  //   '*.myshopify.com',
+  //   'locahost:3000',
+  //   'https://cafe-landing-by-spectrum.trycloudflare.com', // Localhost tunnel
+  // ];
 
   const {nonce, header, NonceProvider} = createContentSecurityPolicy({
     shop: {
       checkoutDomain: context.env.PUBLIC_CHECKOUT_DOMAIN,
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
+    // scriptSrc: ["'self'", "'strict-dynamic'", 'https://assets.mailerlite.com'],
+    frameSrc: ["'self'", 'https://dashboard.mailerlite.com'],
   });
 
   const body = await renderToReadableStream(
@@ -44,7 +47,7 @@ export default async function handleRequest(
   }
 
   responseHeaders.set('Content-Type', 'text/html');
-  // responseHeaders.set('Content-Security-Policy', header);
+  responseHeaders.set('Content-Security-Policy', header);
 
   return new Response(body, {
     headers: responseHeaders,
