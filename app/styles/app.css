@@ -275,6 +275,10 @@ dialog {
   word-wrap: break-word; /* IE */
 }
 
+.container {
+  @apply px-3 md:px-8;
+}
+
 /*
 * --------------------------------------------------
 * components/Aside
@@ -415,6 +419,7 @@ button.reset:hover:not(:has(> *)) {
   align-items: center;
   background: #fff;
   display: flex;
+  @apply justify-between;
   height: var(--header-height);
   padding: 0 1rem;
   position: sticky;
@@ -660,8 +665,8 @@ button.reset:hover:not(:has(> *)) {
 .product-main,
 .product-media {
   align-self: start;
-  position: sticky;
-  top: 6rem;
+
+  @apply relative md:sticky md:top-[6rem];
 }
 
 .product-price-on-sale {

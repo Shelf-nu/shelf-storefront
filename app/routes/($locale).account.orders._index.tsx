@@ -47,7 +47,7 @@ export default function Orders() {
 
 function OrdersTable({orders}: Pick<CustomerOrdersFragment, 'orders'>) {
   return (
-    <div className="acccount-orders">
+    <div className="acccount-orders max-w-full overflow-scroll">
       {orders?.nodes.length ? (
         <Pagination connection={orders}>
           {({nodes, isLoading, PreviousLink, NextLink}) => {

@@ -123,7 +123,7 @@ function FeaturedCollection({
   return (
     <>
       <div
-        className=" py-24 overflow-hidden"
+        className="py-8 md:py-24 overflow-hidden"
         style={{
           background:
             'linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, #FFFFFF 100%)',

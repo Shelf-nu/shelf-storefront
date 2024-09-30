@@ -33,7 +33,7 @@ export function Header({
   return (
     <div className="bg-white sticky top-0 z-50 border-b border-b-gray-200">
       <AnnouncementBar announcement={announcement} />
-      <div className="container relative">
+      <div className="container relative !p-1">
         <header className="header">
           <NavLink
             className="my-3"
@@ -150,7 +150,7 @@ function HeaderCtas({
                   <span className="text-primary w-4 h-auto relative block">
                     <UserCheckIcon />
                   </span>
-                  <span className="text-gray-600">
+                  <span className="text-gray-600 hidden md:inline">
                     <Suspense fallback="User">
                       <Await
                         resolve={data?.customerData}
