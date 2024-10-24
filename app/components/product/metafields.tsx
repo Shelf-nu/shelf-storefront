@@ -31,7 +31,7 @@ export function MetafieldsAccordion({
         return metafield ? (
           <AccordionItem value={metafield.title} key={metafield.title}>
             <AccordionTrigger>
-              <div className="flex items-center">
+              <div className="flex items-center text-left">
                 <MetafieldIcon metafield={metafield.key} />
                 {metafield.title}
               </div>

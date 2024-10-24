@@ -27,7 +27,7 @@ export function CartLineItem({
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
-
+  console.log(merchandise);
   return (
     <li
       key={id}
@@ -62,14 +62,17 @@ export function CartLineItem({
           <div className="flex gap-2">
             <div>
               {product.title}
-              {selectedOptions.map((option) => (
-                <div
-                  key={option.name}
-                  className="text-[12px] text-gray-600 font-normal"
-                >
-                  {option.value}
-                </div>
-              ))}
+              {selectedOptions.map(
+                (option) =>
+                  option.value !== 'Default Title' && (
+                    <div
+                      key={option.name}
+                      className="text-[12px] text-gray-600 font-normal"
+                    >
+                      {option.value}
+                    </div>
+                  ),
+              )}
             </div>
           </div>
         </Link>
