@@ -26,7 +26,6 @@ export function ThreeColumns({
 }: {
   content: ThreeColumnsSectionFragment;
 }) {
-  // console.log(content);
   if (!content) return null;
 
   const cta = content.fields.find((field) => field.key === 'cta_link')?.value;

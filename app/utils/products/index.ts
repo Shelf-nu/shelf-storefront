@@ -46,8 +46,14 @@ export function isBundledProduct(product: ProductWithOptions): boolean {
 }
 
 /** Extract amount of labels from option name
- * The options have to be named in the format "2 sheets (108)" */
-export function extractLabelAmountFromOption(option: string): number {
-  const match = option.match(/\((\d+)\)/);
-  return match ? Number(match[1]) : 0;
+ * The options have to be named in the format "Bundle of n sheets" where n is the number */
+export function extractLabelAmountFromOption(option: string): number | null {
+  // Regex to find a number in the string
+  const regex = /(\d+)/;
+  const match = option.match(regex);
+  if (match) {
+    return parseInt(match[0], 10) * 20;
+  } else {
+    return null;
+  }
 }

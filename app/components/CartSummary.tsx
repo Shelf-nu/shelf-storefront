@@ -32,7 +32,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         </li>
         <li>
           <div className="font-semibold text-gray-800">Shipping: </div>
-          <div className="font-normal">Calculated at chekout</div>
+          <div className="font-normal">Calculated at checkout</div>
         </li>
       </ul>
       <CartDiscounts discountCodes={cart.discountCodes} />
