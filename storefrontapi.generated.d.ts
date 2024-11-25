@@ -1025,6 +1025,9 @@ export type ProductVariantFragment = Pick<
   unitPrice?: StorefrontAPI.Maybe<
     Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
   >;
+  labelsAmount?: StorefrontAPI.Maybe<
+    Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+  >;
 };
 
 type MediaFieldsByType_ExternalVideo_Fragment = Pick<
@@ -1089,6 +1092,9 @@ export type ProductFragment = Pick<
       unitPrice?: StorefrontAPI.Maybe<
         Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
       >;
+      labelsAmount?: StorefrontAPI.Maybe<
+        Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+      >;
     }
   >;
   variants: {
@@ -1113,6 +1119,9 @@ export type ProductFragment = Pick<
         >;
         unitPrice?: StorefrontAPI.Maybe<
           Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+        >;
+        labelsAmount?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
         >;
       }
     >;
@@ -1252,6 +1261,9 @@ export type ProductQuery = {
           unitPrice?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
           >;
+          labelsAmount?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+          >;
         }
       >;
       variants: {
@@ -1276,6 +1288,9 @@ export type ProductQuery = {
             >;
             unitPrice?: StorefrontAPI.Maybe<
               Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+            >;
+            labelsAmount?: StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
             >;
           }
         >;
@@ -1403,6 +1418,9 @@ export type ProductVariantsFragment = {
         unitPrice?: StorefrontAPI.Maybe<
           Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
         >;
+        labelsAmount?: StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
+        >;
       }
     >;
   };
@@ -1438,6 +1456,9 @@ export type ProductVariantsQuery = {
           >;
           unitPrice?: StorefrontAPI.Maybe<
             Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>
+          >;
+          labelsAmount?: StorefrontAPI.Maybe<
+            Pick<StorefrontAPI.Metafield, 'value' | 'type' | 'key'>
           >;
         }
       >;
@@ -1617,11 +1638,11 @@ interface GeneratedQueryTypes {
     return: PoliciesQuery;
     variables: PoliciesQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n    collections(first: 1) {\n      nodes {\n        title\n        handle\n      }\n    }\n\n    media(first: 10) {\n      edges {\n        node {\n          __typename\n          id\n          mediaContentType\n          previewImage {\n            url (transform:  {\n              maxWidth: 950\n              maxHeight: 950\n            })\n            altText\n            width\n            height\n          }\n          ...mediaFieldsByType\n        }\n      }\n    }\n\n    # metafields\n    productFeatures: metafield(namespace: "custom", key: "product_features") {\n      value\n      type\n      key\n    }\n    transformYourAssetManagement: metafield(namespace: "custom", key: "transform_your_specialized_asset_management") {\n      value\n      type\n      key\n    }\n\n    perfectFor: metafield(namespace: "custom", key: "perfect_for") {\n      value\n      type\n      key\n    }\n    whatOurClientsSay: metafield(namespace: "custom", key: "what_our_specialized_industry_clients_say") {\n      value\n      type\n      key\n    }\n    extraInfo: metafield(namespace: "custom", key: "extra_info") {\n      value\n      type\n      key\n    }\n    howToUse: metafield(namespace: "custom", key: "how_to_use") {\n      value\n      type\n      key\n    }  \n    shipping: metafield(namespace: "custom", key: "shipping") {\n      value\n      type\n      key\n    }  \n    returnPolicy: metafield(namespace: "custom", key: "return_policy") {\n      value\n      type\n      key\n    }  \n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url (transform:  {\n        maxWidth: 950\n        maxHeight: 950\n      })\n      altText\n    }\n\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n  #graphql\n  fragment mediaFieldsByType on Media {\n    ...on ExternalVideo {\n      id\n      embeddedUrl\n    }\n    ...on MediaImage {\n      image {\n        url (transform:  {\n           maxWidth: 950\n           maxHeight: 950\n        })\n        altText\n        width\n        height\n      }\n    }\n    ...on Model3d {\n      sources {\n        url\n        mimeType\n        format\n        filesize\n      }\n    }\n    ...on Video {\n      sources {\n        url\n        mimeType\n        format\n        height\n        width\n      }\n    }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    options {\n      name\n      values\n    }\n    selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    variants(first: 1) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n    seo {\n      description\n      title\n    }\n    collections(first: 1) {\n      nodes {\n        title\n        handle\n      }\n    }\n\n    media(first: 10) {\n      edges {\n        node {\n          __typename\n          id\n          mediaContentType\n          previewImage {\n            url (transform:  {\n              maxWidth: 950\n              maxHeight: 950\n            })\n            altText\n            width\n            height\n          }\n          ...mediaFieldsByType\n        }\n      }\n    }\n\n    # metafields\n    productFeatures: metafield(namespace: "custom", key: "product_features") {\n      value\n      type\n      key\n    }\n    transformYourAssetManagement: metafield(namespace: "custom", key: "transform_your_specialized_asset_management") {\n      value\n      type\n      key\n    }\n\n    perfectFor: metafield(namespace: "custom", key: "perfect_for") {\n      value\n      type\n      key\n    }\n    whatOurClientsSay: metafield(namespace: "custom", key: "what_our_specialized_industry_clients_say") {\n      value\n      type\n      key\n    }\n    extraInfo: metafield(namespace: "custom", key: "extra_info") {\n      value\n      type\n      key\n    }\n    howToUse: metafield(namespace: "custom", key: "how_to_use") {\n      value\n      type\n      key\n    }  \n    shipping: metafield(namespace: "custom", key: "shipping") {\n      value\n      type\n      key\n    }  \n    returnPolicy: metafield(namespace: "custom", key: "return_policy") {\n      value\n      type\n      key\n    }  \n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url (transform:  {\n        maxWidth: 950\n        maxHeight: 950\n      })\n      altText\n    }\n\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n    labelsAmount: metafield(namespace: "custom", key: "labels_amount") {\n      value\n      type\n      key\n    }\n  }\n\n  #graphql\n  fragment mediaFieldsByType on Media {\n    ...on ExternalVideo {\n      id\n      embeddedUrl\n    }\n    ...on MediaImage {\n      image {\n        url (transform:  {\n           maxWidth: 950\n           maxHeight: 950\n        })\n        altText\n        width\n        height\n      }\n    }\n    ...on Model3d {\n      sources {\n        url\n        mimeType\n        format\n        filesize\n      }\n    }\n    ...on Video {\n      sources {\n        url\n        mimeType\n        format\n        height\n        width\n      }\n    }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };
-  '#graphql\n  #graphql\n  fragment ProductVariants on Product {\n    variants(first: 250) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url (transform:  {\n        maxWidth: 950\n        maxHeight: 950\n      })\n      altText\n    }\n\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n  query ProductVariants(\n    $country: CountryCode\n    $language: LanguageCode\n    $handle: String!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...ProductVariants\n    }\n  }\n': {
+  '#graphql\n  #graphql\n  fragment ProductVariants on Product {\n    variants(first: 250) {\n      nodes {\n        ...ProductVariant\n      }\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url (transform:  {\n        maxWidth: 950\n        maxHeight: 950\n      })\n      altText\n    }\n\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n    labelsAmount: metafield(namespace: "custom", key: "labels_amount") {\n      value\n      type\n      key\n    }\n  }\n\n\n  query ProductVariants(\n    $country: CountryCode\n    $language: LanguageCode\n    $handle: String!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...ProductVariants\n    }\n  }\n': {
     return: ProductVariantsQuery;
     variables: ProductVariantsQueryVariables;
   };

@@ -149,7 +149,6 @@ export default function Product() {
   const metafields = extractProductMetafields(product);
 
   const {title, descriptionHtml} = product;
-
   return (
     <div className="container">
       <div className="product">
@@ -275,6 +274,11 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
     unitPrice {
       amount
       currencyCode
+    }
+    labelsAmount: metafield(namespace: "custom", key: "labels_amount") {
+      value
+      type
+      key
     }
   }
 ` as const;

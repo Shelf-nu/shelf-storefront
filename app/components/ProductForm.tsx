@@ -32,7 +32,9 @@ export function ProductForm({
         options={product.options.filter((option) => option.values.length > 1)}
         variants={variants}
       >
-        {({option}) => <ProductOptions key={option.name} option={option} />}
+        {({option}) => {
+          return <ProductOptions key={option.name} option={option} />;
+        }}
       </VariantSelector>
       <PricePerSheet product={product} />
 

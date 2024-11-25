@@ -1,5 +1,5 @@
 import {Money} from '@shopify/hydrogen-react';
-import {extractLabelAmountFromOption, isBundledProduct} from '~/utils/products';
+import {isBundledProduct} from '~/utils/products';
 import type {ProductWithOptions} from '~/utils/products/types';
 
 export const PricePerSheet = ({product}: {product: ProductWithOptions}) => {
@@ -15,9 +15,9 @@ export const PricePerSheet = ({product}: {product: ProductWithOptions}) => {
   const selectedOptionCount = options.values.indexOf(selectedVariant.title) + 1;
   const selectedVariantPrice = Number(selectedVariant.price.amount);
   const pricePerSheet = selectedVariantPrice / selectedOptionCount;
-  const labelCount = extractLabelAmountFromOption(selectedVariant.title);
+  const labelCount = selectedVariant?.labelsAmount?.value;
 
-  return (
+  return labelCount ? (
     <div className="mt-[6px]">
       You’ll be getting a total amount of <strong>{labelCount}</strong> labels,
       costing{' '}
@@ -32,5 +32,5 @@ export const PricePerSheet = ({product}: {product: ProductWithOptions}) => {
       </strong>{' '}
       per sheet.
     </div>
-  );
+  ) : null;
 };

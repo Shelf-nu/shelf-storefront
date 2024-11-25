@@ -44,16 +44,3 @@ export function titleFromKey(key: string): string {
 export function isBundledProduct(product: ProductWithOptions): boolean {
   return product.options.some((option) => option.name === 'Bundle');
 }
-
-/** Extract amount of labels from option name
- * The options have to be named in the format "Bundle of n sheets" where n is the number */
-export function extractLabelAmountFromOption(option: string): number | null {
-  // Regex to find a number in the string
-  const regex = /(\d+)/;
-  const match = option.match(regex);
-  if (match) {
-    return parseInt(match[0], 10) * 20;
-  } else {
-    return null;
-  }
-}
