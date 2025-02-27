@@ -10,7 +10,7 @@ export function useCrisp(
     console.log('loading crisp...', CRISP_WEBSITE_ID);
 
     if (CRISP_WEBSITE_ID) {
-      Crisp.configure(CRISP_WEBSITE_ID, {autoload: true});
+      Crisp.configure(CRISP_WEBSITE_ID);
       if (email && nickname) {
         /** Set some user data in crisp */
         Crisp.user.setEmail(email);
