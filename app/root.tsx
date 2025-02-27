@@ -156,7 +156,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
-  useCrisp();
+  useCrisp(data?.CRISP_WEBSITE_ID);
   return (
     <html lang="en">
       <head>

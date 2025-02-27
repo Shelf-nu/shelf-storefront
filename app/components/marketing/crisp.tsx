@@ -2,12 +2,13 @@ import {useEffect} from 'react';
 import {Crisp} from 'crisp-sdk-web';
 
 export function useCrisp(
-  CRISP_WEBSITE_ID = undefined,
+  CRISP_WEBSITE_ID: string | undefined,
   email: undefined | string = undefined,
   nickname: undefined | string = undefined,
 ) {
-  console.log('loading crisp...');
   useEffect(() => {
+    console.log('loading crisp...', CRISP_WEBSITE_ID);
+
     if (CRISP_WEBSITE_ID) {
       Crisp.configure(CRISP_WEBSITE_ID, {autoload: true});
       if (email && nickname) {
