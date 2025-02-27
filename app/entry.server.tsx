@@ -25,6 +25,7 @@ export default async function handleRequest(
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
     // scriptSrc: ["'self'", "'strict-dynamic'", 'https://assets.mailerlite.com'],
+    scriptSrcElem: ["'self'", 'https://client.crisp.chat'],
     frameSrc: ["'self'", 'https://dashboard.mailerlite.com'],
   });
 
@@ -47,7 +48,7 @@ export default async function handleRequest(
   }
 
   responseHeaders.set('Content-Type', 'text/html');
-  responseHeaders.set('Content-Security-Policy', header);
+  // responseHeaders.set('Content-Security-Policy', header);
 
   return new Response(body, {
     headers: responseHeaders,
