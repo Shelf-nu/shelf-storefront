@@ -25,6 +25,7 @@ export default async function handleRequest(
       storeDomain: context.env.PUBLIC_STORE_DOMAIN,
     },
     // scriptSrc: ["'self'", "'strict-dynamic'", 'https://assets.mailerlite.com'],
+    scriptSrcElem: ["'self'", 'https://client.crisp.chat'],
     frameSrc: ["'self'", 'https://dashboard.mailerlite.com'],
   });
 

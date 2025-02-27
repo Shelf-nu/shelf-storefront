@@ -7,8 +7,6 @@ export function useCrisp(
   nickname: undefined | string = undefined,
 ) {
   useEffect(() => {
-    console.log('loading crisp...', CRISP_WEBSITE_ID);
-
     if (CRISP_WEBSITE_ID) {
       Crisp.configure(CRISP_WEBSITE_ID);
       if (email && nickname) {
