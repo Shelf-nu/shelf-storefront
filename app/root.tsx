@@ -21,6 +21,7 @@ import fontsStylesheetUrl from './styles/fonts.css?url';
 import {PageLayout} from '~/components/PageLayout';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import {CUSTOMER_DETAILS_QUERY} from './graphql/customer-account/CustomerDetailsQuery';
+import {useCrisp} from './components/marketing/crisp';
 
 export type RootLoader = typeof loader;
 
@@ -86,6 +87,7 @@ export async function loader(args: LoaderFunctionArgs) {
     },
     MAILERLITE_ACCOUNT: env.MAILERLITE_ACCOUNT,
     STORE_URL: env.STORE_URL,
+    CRISP_WEBSITE_ID: env.CRISP_WEBSITE_ID,
   });
 }
 
@@ -154,6 +156,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
+  useCrisp();
   return (
     <html lang="en">
       <head>

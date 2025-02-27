@@ -38,6 +38,7 @@ declare global {
     PUBLIC_CHECKOUT_DOMAIN: string;
     MAILERLITE_ACCOUNT: string;
     STORE_URL: string;
+    CRISP_WEBSITE_ID: string;
   }
 
   /**
