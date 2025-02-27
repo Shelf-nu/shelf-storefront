@@ -6,6 +6,7 @@ export function useCrisp(
   email: undefined | string = undefined,
   nickname: undefined | string = undefined,
 ) {
+  console.log('loading crisp...');
   useEffect(() => {
     if (CRISP_WEBSITE_ID) {
       Crisp.configure(CRISP_WEBSITE_ID, {autoload: true});
