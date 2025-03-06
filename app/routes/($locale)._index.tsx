@@ -14,6 +14,9 @@ import {Suspense} from 'react';
 import {ProductCard} from '~/components/product/product-card';
 import {ThreeColumns} from '~/components/generic/three-columns';
 import {WarrantySection} from '~/components/generic/warranty-section';
+import {Benefits} from '~/components/marketing/benefits';
+import {SocialTrust} from '~/components/marketing/social-trust';
+import {ApplicationShowcase} from '~/components/marketing/application-showcase';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle('Home')}];
@@ -73,7 +76,7 @@ export default function Homepage() {
   return (
     <div className="home">
       <FeaturedCollection collection={data.featuredCollection} />
-
+      <SocialTrust />
       <Suspense fallback={<div className="text-center p-8">Loading...</div>}>
         <Await resolve={homepageContent}>
           {(response) => {
@@ -93,6 +96,7 @@ export default function Homepage() {
                 {warrantySection?.reference && (
                   <WarrantySection content={warrantySection.reference} />
                 )}
+                <ApplicationShowcase />
 
                 {threeColumnsSection?.reference && (
                   <ThreeColumns content={threeColumnsSection.reference} />
@@ -155,6 +159,8 @@ function FeaturedCollection({
           </div>
         </div>
       </div>
+
+      <Benefits />
 
       <div className="container">
         <div className="flex justify-between items-center pt-24 pb-16">
