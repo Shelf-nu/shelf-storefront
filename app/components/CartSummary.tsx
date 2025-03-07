@@ -24,20 +24,18 @@ type CartSummaryProps = {
 
 export function CartSummary({cart, layout}: CartSummaryProps) {
   const isCartPage = layout === 'page';
-
   const subtotal = useMemo(
     () => parseFloat(cart.cost?.subtotalAmount?.amount || '0'),
     [cart.cost?.subtotalAmount?.amount],
   );
   const amountToFreeShipping = FREE_SHIPPING_THRESHOLD - subtotal;
   const freeShippingProgress = (subtotal / FREE_SHIPPING_THRESHOLD) * 100;
-  console.log(freeShippingProgress);
   const isCloseToFreeShipping =
     freeShippingProgress >= 60 && freeShippingProgress < 100;
 
   const freeShipping = useMemo(() => hasFreeShipping(subtotal), [subtotal]);
   return (
-    <div className="">
+    <div>
       {/* Free Shipping Progress */}
       {!freeShipping && (
         <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
@@ -184,7 +182,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
             </div>
           </li>
         </ul>
-        <CartDiscounts discountCodes={cart.discountCodes} />
+        {/* <CartDiscounts discountCodes={cart.discountCodes} /> */}
         {/* <div className="border-t my-6" /> */}
         <CartCheckoutActions
           checkoutUrl={cart.checkoutUrl}

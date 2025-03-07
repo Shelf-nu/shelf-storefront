@@ -43,7 +43,7 @@ export function Aside({
             &times;
           </button>
         </header>
-        <main className="h-full">{children}</main>
+        <main className="aside-main">{children}</main>
       </aside>
     </div>
   );

@@ -3,6 +3,7 @@ import {Await, NavLink} from '@remix-run/react';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {tw} from '~/utils/tw';
 import {NewsletterForm} from './marketing/newsletter-form';
+import {HeartHandshake, Package, ShieldCheck, Truck} from 'lucide-react';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -18,6 +19,51 @@ export function Footer({
   return (
     <footer className="border-t pt-20">
       <NewsletterForm />
+      {/* Features Grid */}
+      <div className="border-y border-gray-200 bg-white">
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-50 rounded-full p-2">
+                <Truck className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Free Shipping</h3>
+                <p className="text-sm text-gray-600">On orders over $150</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-green-50 rounded-full p-2">
+                <Package className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Fast Delivery</h3>
+                <p className="text-sm text-gray-600">
+                  2-5 business days (for unbranded labels)
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-purple-50 rounded-full p-2">
+                <ShieldCheck className="h-5 w-5 text-purple-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Secure Payment</h3>
+                <p className="text-sm text-gray-600">100% secure checkout</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="bg-amber-50 rounded-full p-2">
+                <HeartHandshake className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-medium">Dedicated Support</h3>
+                <p className="text-sm text-gray-600">Here to help 24/7</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <Suspense>
         <Await resolve={footerPromise}>
           {(footer) => {
