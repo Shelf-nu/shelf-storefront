@@ -1,6 +1,6 @@
 export function ApplicationShowcase() {
   return (
-    <section className="pt-[30px] pb-[45px] bg-gray-50">
+    <section className="pt-[30px] pb-[45px] bg-gray-50 overflow-hidden">
       <div className="container bg-gray-200 rounded-lg">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="py-8 px-4">

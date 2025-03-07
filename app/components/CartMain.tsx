@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {tw} from '~/utils/tw';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -27,11 +28,17 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
     Boolean(cart?.discountCodes?.filter((code) => code.applicable)?.length);
   const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity! > 0;
+  const isCartPage = layout === 'page';
 
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
-      <div className="cart-details">
+      <div
+        className={tw(
+          'cart-details flex flex-col justify-between',
+          !isCartPage && 'h-full',
+        )}
+      >
         <div aria-labelledby="cart-lines">
           <ul>
             {(cart?.lines?.nodes ?? []).map(
