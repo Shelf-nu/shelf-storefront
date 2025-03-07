@@ -17,6 +17,7 @@ import {WarrantySection} from '~/components/generic/warranty-section';
 import {Benefits} from '~/components/marketing/benefits';
 import {SocialTrust} from '~/components/marketing/social-trust';
 import {ApplicationShowcase} from '~/components/marketing/application-showcase';
+import {HereToHelp} from '~/components/marketing/here-to-help';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle('Home')}];
@@ -97,6 +98,7 @@ export default function Homepage() {
                   <WarrantySection content={warrantySection.reference} />
                 )}
                 <ApplicationShowcase />
+                <HereToHelp />
 
                 {threeColumnsSection?.reference && (
                   <ThreeColumns content={threeColumnsSection.reference} />

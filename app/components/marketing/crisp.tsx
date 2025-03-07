@@ -1,5 +1,7 @@
 import {useEffect} from 'react';
 import {Crisp} from 'crisp-sdk-web';
+import type {ButtonProps} from '../button';
+import {Button} from '../button';
 
 export function useCrisp(
   CRISP_WEBSITE_ID: string | undefined,
@@ -17,3 +19,9 @@ export function useCrisp(
     }
   }, [CRISP_WEBSITE_ID, email, nickname]);
 }
+
+export const CrispButton = (props: ButtonProps) => (
+  <Button {...props} onClick={() => Crisp.chat.open()} type="button">
+    {props.children}
+  </Button>
+);
