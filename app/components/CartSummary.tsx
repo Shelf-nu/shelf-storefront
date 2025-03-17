@@ -77,7 +77,7 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
                   </span>{' '}
                   more and{' '}
                   <span className="underline">
-                    save $30(estimated) on shipping costs
+                    save from $25 to $80(estimated) on shipping costs
                   </span>
                 </p>
               </div>
@@ -136,7 +136,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
                 FREE SHIPPING UNLOCKED!
               </h3>
               <p className="text-sm text-green-700">
-                You&apos;ve saved at least $30(estimated) on shipping costs
+                You&apos;ve saved at least $25 to $80(estimated) on shipping
+                costs
               </p>
             </div>
           </div>
@@ -177,13 +178,13 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
               {freeShipping ? (
                 <span className="text-green-600">Free (air) shipping</span>
               ) : (
-                'Calculated at checkout ($15 to $30)'
+                'Calculated at checkout ($25 to $80)'
               )}
             </div>
           </li>
         </ul>
         {/* <CartDiscounts discountCodes={cart.discountCodes} /> */}
-        {/* <div className="border-t my-6" /> */}
+        <div className="border-t my-6" />
         <CartCheckoutActions
           checkoutUrl={cart.checkoutUrl}
           isCartPage={isCartPage}
