@@ -262,21 +262,21 @@ function AnnouncementBar({
   announcement: HeaderQuery['announcement']['nodes'][number] | undefined | null;
 }) {
   return announcement && announcement?.content?.value ? (
-    <div className="bg-gray-25 border-b border-b-gray-200">
+    <div className="bg-primary  border-b border-b-gray-200">
       <div className="container">
         <RichText
           data={announcement?.content.value}
           components={{
             paragraph({node}) {
               return (
-                <p className="text-[14px] text-gray-600 leading-4">
+                <p className="text-[14px] text-white leading-4">
                   {node.children}
                 </p>
               );
             },
             list({node}) {
               return (
-                <ul className="list-disc list-inside text-[16px]">
+                <ul className="list-disc text-white list-inside text-[16px]">
                   {node.children}
                 </ul>
               );

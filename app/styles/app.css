@@ -462,15 +462,18 @@ button.reset:hover:not(:has(> *)) {
 * components/Cart
 * --------------------------------------------------
 */
-.cart-main {
+.aside-main {
   height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
+  max-height: calc(100% - 64px);
   overflow-y: auto;
   width: auto;
 }
 
-.cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
+.cart-main {
+  height: 100%;
+  max-height: calc(100% - 64px);
+  overflow-y: auto;
+  width: auto;
 }
 
 .cart-item {
