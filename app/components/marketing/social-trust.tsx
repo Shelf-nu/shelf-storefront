@@ -9,9 +9,9 @@ export function SocialTrust() {
         </div>
         <div className="flex flex-col md:flex-row gap-[35px] justify-center items-center">
           <img
-            src="/images/logos/classic-teleproductions-logo.png"
-            alt="Classic teleproductions logo"
-            className="h-[40px] w-auto"
+            src="/images/logos/sea-shepherd-logo.jpg"
+            alt="Sea shepherd logo"
+            className="h-[40px] w-auto filter grayscale"
           />
           <img
             src="/images/logos/uss-midway-museum.png"

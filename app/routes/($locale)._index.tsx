@@ -137,7 +137,7 @@ function FeaturedCollection({
         }}
       >
         <div className="container">
-          <div className="flex items-center">
+          <div className="flex items-center relative">
             <div className="max-w-[560px] w-full p-[40px] z-20 shadow-3xl border border-gray-200 bg-white rounded-lg [&_h1]:mb-6 [&_h1]:mt-4 [&_p]:mb-4">
               <img
                 src="/images/logo-full-color.png"
@@ -150,13 +150,20 @@ function FeaturedCollection({
               <Button to="collections/all">Shop now</Button>
             </div>
             {image && (
-              <div className="featured-collection-image z-10  h-[720px] w-full flex-1 ml-[-200px] r-0 overflow-hidden">
-                <Image
-                  data={image}
-                  sizes="100vw"
-                  className="object-center object-cover h-full w-full"
-                />
-              </div>
+              <>
+                <div className="featured-collection-image z-10  h-[720px] w-full flex-1 ml-[-200px] r-0 overflow-hidden">
+                  <img
+                    src={'/images/sea-shepherd-camera-operator.jpeg'}
+                    alt="Sea Shepherd drones"
+                    sizes="100vw"
+                    className="object-center object-cover h-full w-full"
+                  />
+                </div>
+                <div className="text-right font-mono absolute bottom-[-20px] right-0 text-[12px]">
+                  Paula Moreno - Sea Shepherd Content Crew - Manages equipment
+                  with Shelf.
+                </div>
+              </>
             )}
           </div>
         </div>

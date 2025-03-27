@@ -22,6 +22,7 @@ import {
   ProductMedia,
 } from '~/components/product/product-media';
 import {tw} from '~/utils/tw';
+import {useWindowSize} from '~/utils/use-window-size';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: appendToMetaTitle(data?.product.title ?? '')}];
@@ -147,42 +148,85 @@ export default function Product() {
     variants,
   );
   const metafields = extractProductMetafields(product);
+  const {width} = useWindowSize();
+  const isMobile = width ? width < 768 : false;
 
   const {title, descriptionHtml} = product;
   return (
     <div className="container">
       <div className="product">
-        <div className="product-media pt-7">
-          <div className="flex flex-col gap-4 ">
-            <ProductImage
-              image={selectedVariant?.image}
-              className={tw(PRODUCT_IMAGE_STYLES)}
-            />
-            <Suspense
-              fallback={<ProductMedia media={product.media} variants={[]} />}
-            >
-              <Await
-                errorElement="There was a problem loading product variants"
-                resolve={variants}
-              >
-                {(data) => (
+        {!isMobile && (
+          // Desktop Product Media
+          <div className="product-media-desktop pt-7">
+            <div className="flex flex-col gap-4">
+              <ProductImage
+                image={selectedVariant?.image}
+                className={tw(PRODUCT_IMAGE_STYLES)}
+              />
+              <Suspense
+                fallback={
                   <ProductMedia
                     media={product.media}
-                    variants={data?.product?.variants.nodes || []}
+                    variants={[]}
+                    isMobile={false}
+                    selectedVariant={selectedVariant}
                   />
-                )}
-              </Await>
-            </Suspense>
+                }
+              >
+                <Await
+                  errorElement="There was a problem loading product variants"
+                  resolve={variants}
+                >
+                  {(data) => (
+                    <ProductMedia
+                      media={product.media}
+                      variants={data?.product?.variants.nodes || []}
+                      isMobile={false}
+                      selectedVariant={selectedVariant}
+                    />
+                  )}
+                </Await>
+              </Suspense>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="product-main">
+        <div className="product-main pt-4 md:pt-7">
           <Breadcrumbs />
           <img
             src="/images/logo-full-color.png"
             alt="shelf-logo"
-            className="h-6 mb-3"
+            className="h-6 mb-3 hidden md:block"
           />
+          {isMobile && (
+            // Mobile Product Images Carousel
+            <div className="w-full">
+              <Suspense
+                fallback={
+                  <ProductMedia
+                    media={product.media}
+                    variants={[]}
+                    isMobile={true}
+                    selectedVariant={selectedVariant}
+                  />
+                }
+              >
+                <Await
+                  errorElement="There was a problem loading product variants"
+                  resolve={variants}
+                >
+                  {(data) => (
+                    <ProductMedia
+                      media={product.media}
+                      variants={data?.product?.variants.nodes || []}
+                      isMobile={true}
+                      selectedVariant={selectedVariant}
+                    />
+                  )}
+                </Await>
+              </Suspense>
+            </div>
+          )}
           <h1 className="md:max-w-[550px]">{title}</h1>
           <ProductPrice
             price={selectedVariant?.price}

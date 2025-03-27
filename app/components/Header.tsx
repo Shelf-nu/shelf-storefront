@@ -5,6 +5,7 @@ import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {SearchIcon, ShoppingCartIcon, UserCheckIcon, UserIcon} from './icons';
 import type {RootLoader} from '~/root';
+import {HamburgerMenuIcon} from '@radix-ui/react-icons';
 
 interface HeaderProps {
   header: HeaderQuery;
@@ -196,7 +197,7 @@ function HeaderMenuMobileToggle() {
       className="header-menu-mobile-toggle reset"
       onClick={() => open('mobile')}
     >
-      <h3>☰</h3>
+      <HamburgerMenuIcon className="size-5 text-gray-600" />
     </button>
   );
 }
@@ -233,11 +234,11 @@ function CartBadge({count}: {count: number | null}) {
     >
       <div className="w-5 h-auto text-gray-600 relative">
         <ShoppingCartIcon />
-        {/* {count !== null && (
-          <span className="text-[10px] absolute top-[-10px] right-[-7px]  size-[14px] text-center align-middle leading-[10px] pt-[2px]">
-            {count}
+        {count !== null && count > 0 && (
+          <span className="absolute -top-2 -right-2 flex items-center justify-center w-4 h-4 bg-primary-500 text-white text-[10px] font-medium rounded-full ring-1 ring-white">
+            {count > 9 ? '9+' : count}
           </span>
-        )} */}
+        )}
       </div>{' '}
     </a>
   );

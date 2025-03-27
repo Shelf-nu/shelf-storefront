@@ -2,6 +2,7 @@ import {ChevronRightIcon} from '@radix-ui/react-icons';
 import {Link, useMatches} from '@remix-run/react';
 import {tw} from '~/utils/tw';
 import type {Collection, Product} from '@shopify/hydrogen/storefront-api-types';
+import {ChevronLeft} from 'lucide-react';
 
 // Define an interface that extends RouteHandle with the 'breadcrumb' property
 interface HandleWithBreadcrumb {
@@ -35,12 +36,13 @@ export function Breadcrumbs() {
   }
 
   return (
-    <div className="mb-[26px] flex max-w-full truncate">
+    <div className="breadcrumbs mb-4 md:mb-[26px] flex max-w-full overflow-x-auto whitespace-nowrap scrollbar-hide">
       {breadcrumbs.map((breadcrumb, index) => (
         <Breadcrumb
           key={breadcrumb.href}
           breadcrumb={breadcrumb}
-          isLastItem={index === breadcrumbs.length - 1}
+          index={index}
+          breadcrumbsLength={breadcrumbs.length}
         />
       ))}
     </div>
@@ -54,26 +56,45 @@ type Breadcrumb = {
 
 const Breadcrumb = ({
   breadcrumb,
-  isLastItem,
+  index,
+  breadcrumbsLength,
 }: {
   breadcrumb: Breadcrumb;
-  isLastItem: boolean;
+  index: number;
+  breadcrumbsLength: number;
 }) => {
+  const isLastItem = index === breadcrumbsLength - 1;
+  const isFirstItem = index === 0;
+  /** We need this for mobile as this is the only item we will display on mobile */
+  const isSecondToLast = index === breadcrumbsLength - 2;
   return (
-    <div className={tw('breadcrumb', isLastItem ? 'truncate' : '')}>
+    <div
+      className={tw(
+        'breadcrumb',
+        isLastItem ? 'truncate' : '',
+        isSecondToLast && 'w-full md:w-auto',
+      )}
+    >
       <Link
         to={isLastItem ? '' : breadcrumb.href}
         className={tw(
-          'text-[14px] font-medium ',
+          'text-[14px] font-medium',
           !isLastItem
             ? 'text-gray-600 hover:text-gray-600 hover:underline'
-            : 'text-primary-800 hover:text-primary-800 pointer-events-none',
+            : 'text-primary-500 hover:text-primary-500 pointer-events-none',
+          // This handles mobile
+          !isSecondToLast
+            ? 'hidden md:inline'
+            : 'text-primary-500 hover:text-primary-500 md:text-gray-600 md:hover:text-gray-600 hover:underline flex items-center md:inline ml-[-6px] md:ml-0',
         )}
       >
+        {isSecondToLast && (
+          <ChevronLeft className="inline align-middle text-primary-500 md:hidden" />
+        )}
         {breadcrumb.label}
       </Link>
       {!isLastItem && (
-        <span className="mx-2.5 md:mx-3">
+        <span className="mx-2.5 md:mx-3 hidden md:inline">
           <ChevronRightIcon className="inline align-middle" />
         </span>
       )}

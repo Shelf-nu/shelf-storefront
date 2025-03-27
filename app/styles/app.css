@@ -666,10 +666,17 @@ button.reset:hover:not(:has(> *)) {
 }
 
 .product-main,
-.product-media {
+.product-media-desktop {
   align-self: start;
 
-  @apply relative md:sticky md:top-[6rem];
+  @apply relative md:sticky md:top-[6rem] max-w-full;
+}
+
+.product-media-desktop {
+  display: none;
+  @media (min-width: 45em) {
+    display: block;
+  }
 }
 
 .product-price-on-sale {
