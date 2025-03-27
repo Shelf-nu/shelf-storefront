@@ -154,7 +154,7 @@ function FeaturedCollection({
                 <div className="featured-collection-image z-10  h-[720px] w-full flex-1 ml-[-200px] r-0 overflow-hidden">
                   <img
                     src={'/images/sea-shepherd-camera-operator.jpeg'}
-                    alt="Sea Shepherd drones"
+                    alt="Sea Shepherd camera operator"
                     sizes="100vw"
                     className="object-center object-cover h-full w-full"
                   />
