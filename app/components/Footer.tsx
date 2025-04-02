@@ -17,7 +17,7 @@ export function Footer({
   publicStoreDomain,
 }: FooterProps) {
   return (
-    <footer className="border-t pt-20">
+    <footer className="border-t">
       <NewsletterForm />
       {/* Features Grid */}
       <div className="border-y border-gray-200 bg-white">
