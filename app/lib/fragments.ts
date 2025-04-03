@@ -56,6 +56,9 @@ export const CART_QUERY_FRAGMENT = `#graphql
     }
   }
   fragment CartApiQuery on Cart {
+    metafield(namespace: "custom", key: "client_logos") {
+      value
+    }
     updatedAt
     id
     checkoutUrl

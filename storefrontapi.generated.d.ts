@@ -42,6 +42,7 @@ export type CartApiQueryFragment = Pick<
   StorefrontAPI.Cart,
   'updatedAt' | 'id' | 'checkoutUrl' | 'totalQuantity' | 'note'
 > & {
+  metafield?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Metafield, 'value'>>;
   buyerIdentity: Pick<
     StorefrontAPI.CartBuyerIdentity,
     'countryCode' | 'email' | 'phone'

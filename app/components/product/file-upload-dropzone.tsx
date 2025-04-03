@@ -25,6 +25,7 @@ const FileUploadDropzone: React.FC = () => {
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
   const ALLOWED_FILE_TYPES = ['image/svg+xml', 'image/png', 'application/pdf'];
+  const MAX_FILES = 4; // Maximum number of files allowed
 
   const validateFile = (file: File): string | null => {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
@@ -38,29 +39,38 @@ const FileUploadDropzone: React.FC = () => {
     return null;
   };
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setError('');
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      setError('');
 
-    // Validate each file
-    for (const file of acceptedFiles) {
-      const validationError = validateFile(file);
-      if (validationError) {
-        setError(validationError);
+      // Check if adding these files would exceed the maximum
+      if (files.length + acceptedFiles.length > MAX_FILES) {
+        setError(`You can upload a maximum of ${MAX_FILES} files.`);
         return;
       }
-    }
 
-    // Create preview URLs for images if needed
-    const newFiles = acceptedFiles.map(
-      (file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }) as FileWithPreview,
-    );
+      // Validate each file
+      for (const file of acceptedFiles) {
+        const validationError = validateFile(file);
+        if (validationError) {
+          setError(validationError);
+          return;
+        }
+      }
 
-    setFiles((prev) => [...prev, ...newFiles]);
+      // Create preview URLs for images if needed
+      const newFiles = acceptedFiles.map(
+        (file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          }) as FileWithPreview,
+      );
+
+      setFiles((prev) => [...prev, ...newFiles]);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [files.length],
+  ); // Add files.length as a dependency
 
   const removeFile = (index: number): void => {
     setFiles((prev) => {
@@ -70,6 +80,9 @@ const FileUploadDropzone: React.FC = () => {
       newFiles.splice(index, 1);
       return newFiles;
     });
+
+    // Clear any error when a file is removed
+    setError('');
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>): void => {
@@ -105,6 +118,11 @@ const FileUploadDropzone: React.FC = () => {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
       onDrop(Array.from(e.target.files));
+    }
+
+    // Reset the input value so the same file can be selected again if needed
+    if (e.target) {
+      e.target.value = '';
     }
   };
 
@@ -173,30 +191,52 @@ const FileUploadDropzone: React.FC = () => {
             ? 'border-blue-500 bg-blue-50'
             : error
             ? 'border-red-500 bg-red-50'
+            : files.length >= MAX_FILES
+            ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
             : 'border-gray-300 hover:border-gray-400'
         }`}
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
+        onDragEnter={files.length < MAX_FILES ? handleDragEnter : undefined}
+        onDragOver={files.length < MAX_FILES ? handleDragOver : undefined}
+        onDragLeave={files.length < MAX_FILES ? handleDragLeave : undefined}
+        onDrop={files.length < MAX_FILES ? handleDrop : undefined}
+        onClick={() =>
+          files.length < MAX_FILES && fileInputRef.current?.click()
+        }
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (
+            files.length < MAX_FILES &&
+            (e.key === 'Enter' || e.key === ' ')
+          ) {
             e.preventDefault();
             fileInputRef.current?.click();
           }
         }}
-        aria-label="Upload file dropzone. Click or drag and drop files here."
+        aria-label={
+          files.length >= MAX_FILES
+            ? `Maximum of ${MAX_FILES} files reached. Please remove a file to upload more.`
+            : 'Upload file dropzone. Click or drag and drop files here.'
+        }
+        aria-disabled={files.length >= MAX_FILES}
       >
         <div className="flex items-center justify-center gap-2">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
-            <CloudUpload className="text-primary size-5" />
+            <CloudUpload
+              className={`size-5 ${
+                files.length >= MAX_FILES ? 'text-gray-400' : 'text-primary'
+              }`}
+            />
           </div>
           <div>
             <p className="mb-1 text-sm font-medium text-gray-700">
-              Upload your logo here
+              {files.length >= MAX_FILES
+                ? `Maximum ${MAX_FILES} files reached`
+                : 'Upload your logo here'}
             </p>
-            <p className="text-xs text-gray-500">SVG, PDF or PNG</p>
+            <p className="text-xs text-gray-500">
+              {files.length >= MAX_FILES
+                ? 'Please remove a file to upload more'
+                : 'SVG, PDF or PNG'}
+            </p>
             <input
               id="fileInput"
               type="file"
@@ -205,6 +245,7 @@ const FileUploadDropzone: React.FC = () => {
               multiple
               accept=".svg,.png,.pdf"
               ref={fileInputRef}
+              disabled={files.length >= MAX_FILES}
             />
           </div>
         </div>
@@ -213,18 +254,20 @@ const FileUploadDropzone: React.FC = () => {
 
       <div className="mt-1 text-xs text-gray-500">
         Not sure how to upload your logo? <LogoUploadGuide /> for the best
-        results.
+        results. Your uploaded logos are saved for your entire order. When
+        ordering multiple customizable products, you only need to upload the
+        logos to one of the products.
       </div>
 
       {files.length > 0 ? (
         <div className="mt-4">
           <h3 className="text-sm font-medium text-gray-700 mb-2">
-            Uploaded files ({files.length})
+            Uploaded files ({files.length}/{MAX_FILES})
           </h3>
           <ul className="space-y-2">
             {files.map((file, index) => (
               <li
-                key={`${file.name}-${index}`}
+                key={`${file.name}-${files.indexOf(file)}`}
                 className="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200"
               >
                 <div className="flex items-center space-x-2">
