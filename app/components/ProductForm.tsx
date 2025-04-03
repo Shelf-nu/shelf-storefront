@@ -9,9 +9,10 @@ import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {PricePerSheet} from './product/price-per-sheet';
 import {useState} from 'react';
-import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
-import {Button} from './button';
+
 import {QuantitySelector} from './product/quantity-selector';
+import {isCustomizedProduct} from '~/utils/products';
+import FileUploadDropzone from './product/file-upload-dropzone';
 
 export function ProductForm({
   product,
@@ -24,6 +25,7 @@ export function ProductForm({
 }) {
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
+  const shouldShowLogoDropzone = isCustomizedProduct(product);
 
   return (
     <div className="">
@@ -37,6 +39,10 @@ export function ProductForm({
         }}
       </VariantSelector>
       <PricePerSheet product={product} />
+      <br />
+
+      {/* Logo upload dropzone */}
+      {shouldShowLogoDropzone && <FileUploadDropzone />}
 
       <br />
       <div className="flex gap-2 items-center">
