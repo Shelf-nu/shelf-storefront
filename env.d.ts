@@ -39,6 +39,9 @@ declare global {
     MAILERLITE_ACCOUNT: string;
     STORE_URL: string;
     CRISP_WEBSITE_ID: string;
+
+    SUPABASE_SERVICE_ROLE: string;
+    SUPABASE_URL: string;
   }
 
   /**

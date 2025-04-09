@@ -1,3 +1,4 @@
+import {ProductFragment} from 'storefrontapi.generated';
 import type {Metafield, Product, ProductWithOptions} from './types';
 
 export const PRODUCT_METAFIELDS_KEYS = [
@@ -43,4 +44,11 @@ export function titleFromKey(key: string): string {
 /** Checks if a product has the option Bundle */
 export function isBundledProduct(product: ProductWithOptions): boolean {
   return product.options.some((option) => option.name === 'Bundle');
+}
+
+/** Check if the product belongs to the collection with handle 'customized' */
+export function isCustomizedProduct(product: ProductFragment): boolean {
+  return product.collections.nodes.some(
+    (collection) => collection.handle === 'customized',
+  );
 }
