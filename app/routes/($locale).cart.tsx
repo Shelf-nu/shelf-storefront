@@ -1,7 +1,11 @@
 import {Await, type MetaFunction, useRouteLoaderData} from '@remix-run/react';
 import {Suspense} from 'react';
 import type {CartQueryDataReturn} from '@shopify/hydrogen';
-import {CartForm} from '@shopify/hydrogen';
+import {
+  CartForm,
+  cartMetafieldDeleteDefault,
+  cartMetafieldsSetDefault,
+} from '@shopify/hydrogen';
 import {json, type ActionFunctionArgs} from '@shopify/remix-oxygen';
 import {CartMain} from '~/components/CartMain';
 import type {RootLoader} from '~/root';
@@ -12,7 +16,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function action({request, context}: ActionFunctionArgs) {
-  const {cart} = context;
+  const {cart, storefront} = context;
 
   const formData = await request.formData();
 
@@ -55,6 +59,48 @@ export async function action({request, context}: ActionFunctionArgs) {
       });
       break;
     }
+    case CartForm.ACTIONS.AttributesUpdateInput:
+      const attr = [
+        {
+          key: 'custom.client_logos',
+          value:
+            'https://cdn.prod.website-files.com/64186faca4f0a0ec048fb2dd/672cb3561c292cee3970a223_chicagobulls.png',
+        },
+      ];
+      result = await cart.updateAttributes(inputs.attributes);
+      break;
+    // case CartForm.ACTIONS.MetafieldsSet: {
+    //   result = await cart.setMetafields([
+    //     {
+    //       key: 'custom.client_logos',
+    //       type: 'JSON',
+    //       value:
+    //         JSON.stringify({
+    //           client_logos: [
+    //             {
+    //               url: 'https://cdn.shopify.com/s/files/1/0680/4150/7113/files/logo.png?v=1669727667',
+    //             },
+    //             {
+    //               url: 'https://cdn.prod.website-files.com/64186faca4f0a0ec048fb2dd/672cb3561c292cee3970a223_chicagobulls.png',
+    //             },
+    //           ],
+    //         }) ?? '',
+    //     },
+    //   ]);
+
+    //   break;
+    // }
+
+    // /** @ts-ignore - for some reason there is a type mismatch. if I use MetafieldsDelete, which is what i see in the type, i get an error: No action provided */
+    // case CartForm.ACTIONS.MetafieldDelete: {
+    //   const cartDeleteMetafield = cartMetafieldDeleteDefault({
+    //     storefront,
+    //     getCartId: cart.getCartId,
+    //   });
+
+    //   result = await cartDeleteMetafield('custom.client_logos');
+    //   break;
+    // }
     default:
       throw new Error(`${action} cart action is not defined`);
   }

@@ -1,11 +1,16 @@
-import {type OptimisticCartLine, useOptimisticCart} from '@shopify/hydrogen';
-import {Link} from '@remix-run/react';
+import {
+  CartForm,
+  type OptimisticCartLine,
+  useOptimisticCart,
+} from '@shopify/hydrogen';
+import {Link, useFetcher} from '@remix-run/react';
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
 import {tw} from '~/utils/tw';
 import {AnimatePresence, motion} from 'framer-motion';
+import {Button} from './button';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -30,7 +35,9 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity! > 0;
   const isCartPage = layout === 'page';
-  console.log('cart', cart);
+  console.log('cart', cart.attributes);
+
+  const fetcher = useFetcher();
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
@@ -79,6 +86,32 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                 ),
               )}
             </ul>
+          </div>
+          <div className="flex mt-2 justify-center gap-4">
+            <CartForm
+              route="/cart"
+              action={CartForm.ACTIONS.AttributesUpdateInput}
+              inputs={{
+                attributes: [
+                  {
+                    key: 'custom.client_logos',
+                    value:
+                      'https://cdn.prod.website-files.com/64186faca4f0a0ec048fb2dd/672cb3561c292cee3970a223_chicagobulls.png',
+                  },
+                ],
+              }}
+            >
+              <Button type="submit">Add attributes</Button>
+            </CartForm>
+            <CartForm
+              route="/cart"
+              action={CartForm.ACTIONS.AttributesUpdateInput}
+              inputs={{
+                attributes: [],
+              }}
+            >
+              <Button type="submit">Delete attributes</Button>
+            </CartForm>
           </div>
         </div>
 
