@@ -28,7 +28,7 @@ const FileUploadDropzone: React.FC = () => {
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
   const ALLOWED_FILE_TYPES = ['image/svg+xml', 'image/png', 'application/pdf'];
-  const MAX_FILES = 4; // Maximum number of files allowed
+  const MAX_FILES = 1; // Changed to 1 maximum file
 
   const validateFile = (file: File): string | null => {
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
@@ -46,7 +46,7 @@ const FileUploadDropzone: React.FC = () => {
     (acceptedFiles: File[]) => {
       setError('');
 
-      // Just take the first file if multiple are dropped
+      // Take only the first file if multiple are dropped
       const newFile = acceptedFiles[0];
 
       if (!newFile) return;
@@ -58,22 +58,24 @@ const FileUploadDropzone: React.FC = () => {
         return;
       }
 
-      // Revoke old preview URL to avoid memory leaks
+      // Revoke previous object URL if there is one
       if (file?.preview) {
         URL.revokeObjectURL(file.preview);
       }
 
-      // Create preview URL
+      // Create preview URL for the file
       const fileWithPreview = Object.assign(newFile, {
         preview: URL.createObjectURL(newFile),
       }) as FileWithPreview;
 
       setFile(fileWithPreview);
 
-      // Submit the form after file is validated and set
-      if (formRef.current) {
-        formRef.current.submit();
-      }
+      // Submit the form after setting the file
+      setTimeout(() => {
+        if (formRef.current) {
+          formRef.current.submit();
+        }
+      }, 0);
     },
     [file],
   );
@@ -173,6 +175,7 @@ const FileUploadDropzone: React.FC = () => {
     }
   };
 
+  // Clean up previews when component unmounts
   useEffect(() => {
     return () => {
       if (file?.preview) {
@@ -182,112 +185,126 @@ const FileUploadDropzone: React.FC = () => {
   }, [file]);
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors ${
-        isDragging
-          ? 'border-blue-500 bg-blue-50'
-          : error
-          ? 'border-red-500 bg-red-50'
-          : file
-          ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
-          : 'border-gray-300 hover:border-gray-400'
-      }`}
-      onDragEnter={!file ? handleDragEnter : undefined}
-      onDragOver={!file ? handleDragOver : undefined}
-      onDragLeave={!file ? handleDragLeave : undefined}
-      onDrop={!file ? handleDrop : undefined}
-      onClick={() => !file && fileInputRef.current?.click()}
-      onKeyDown={(e) => {
-        if (!file && (e.key === 'Enter' || e.key === ' ')) {
-          e.preventDefault();
-          fileInputRef.current?.click();
+    <div className="w-full">
+      <div
+        role="button"
+        tabIndex={0}
+        className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+          isDragging
+            ? 'border-blue-500 bg-blue-50'
+            : error
+            ? 'border-red-500 bg-red-50'
+            : file
+            ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
+            : 'border-gray-300 hover:border-gray-400'
+        }`}
+        onDragEnter={!file ? handleDragEnter : undefined}
+        onDragOver={!file ? handleDragOver : undefined}
+        onDragLeave={!file ? handleDragLeave : undefined}
+        onDrop={!file ? handleDrop : undefined}
+        onClick={() => !file && fileInputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (!file && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
+        aria-label={
+          file
+            ? `File uploaded. Please remove it to upload a different file.`
+            : 'Upload file dropzone. Click or drag and drop a file here.'
         }
-      }}
-      aria-label={
-        file
-          ? 'File already uploaded. Please remove it to upload a different one.'
-          : 'Upload file dropzone. Click or drag and drop a file here.'
-      }
-      aria-disabled={!!file}
-    >
-      <div className="flex items-center justify-center gap-2">
-        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
-          <CloudUpload
-            className={`size-5 ${file ? 'text-gray-400' : 'text-primary'}`}
-          />
-        </div>
-        <div>
-          <p className="mb-1 text-sm font-medium text-gray-700">
-            {file ? (
-              <div className="mt-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Uploaded file
-                </h3>
-                <div className="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    {renderFilePreview(file)}
-                    <span className="text-sm text-gray-700 truncate max-w-xs">
-                      {file.name}
-                    </span>
-                  </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFile();
-                    }}
-                    className="text-red-500 hover:text-red-700 focus:outline-none"
-                    aria-label={`Remove ${file.name}`}
-                    type="button"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-2">
-                Note: If you choose to not upload your logo, after placing your
-                order, we will reach out to gather the logo file from you and
-                check it for print. Keep in mind that this may delay the
-                production time of your order.
-              </div>
-            )}
-          </p>
-          <p className="text-xs text-gray-500">
-            {file ? 'Remove to upload a different file' : 'SVG, PDF or PNG'}
-          </p>
-          <fetcher.Form
-            ref={formRef}
-            action={'/api/file-upload'}
-            encType="multipart/form-data"
-            method="post"
-          >
-            <input
-              id="fileInput"
-              type="file"
-              className="hidden"
-              onChange={handleFileInput}
-              accept=".svg,.png,.pdf"
-              ref={fileInputRef}
-              disabled={!!file}
-              name="file" // Add name attribute for form submission
+        aria-disabled={!!file}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
+            <CloudUpload
+              className={`size-5 ${file ? 'text-gray-400' : 'text-primary'}`}
             />
-          </fetcher.Form>
+          </div>
+          <div>
+            <p className="mb-1 text-sm font-medium text-gray-700">
+              {file ? `File uploaded` : 'Upload your logo here'}
+            </p>
+            <p className="text-xs text-gray-500">
+              {file
+                ? 'Remove file to upload a different one'
+                : 'SVG, PDF or PNG'}
+            </p>
+            <fetcher.Form
+              ref={formRef}
+              action={'/api/file-upload'}
+              encType="multipart/form-data"
+              method="post"
+            >
+              <input
+                id="fileInput"
+                name="file" // Added name attribute for form submission
+                type="file"
+                className="hidden"
+                onChange={handleFileInput}
+                accept=".svg,.png,.pdf"
+                ref={fileInputRef}
+                disabled={!!file}
+              />
+            </fetcher.Form>
+          </div>
         </div>
       </div>
+      {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
+
+      <div className="mt-1 text-xs text-gray-500">
+        Not sure how to upload your logo? <LogoUploadGuide /> for the best
+        results. Your uploaded logos are saved for your entire order. When
+        ordering multiple customizable products, you only need to upload the
+        logos to one of the products.
+      </div>
+
+      {file ? (
+        <div className="mt-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">
+            Uploaded file (1/{MAX_FILES})
+          </h3>
+          <div className="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200">
+            <div className="flex items-center space-x-2">
+              {renderFilePreview(file)}
+              <span className="text-sm text-gray-700 truncate max-w-xs">
+                {file.name}
+              </span>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                removeFile();
+              }}
+              className="text-red-500 hover:text-red-700 focus:outline-none"
+              aria-label={`Remove ${file.name}`}
+              type="button"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-2">
+          Note: If you choose to not upload your logo, after placing your order,
+          we will reach out to gather the logo files from you and check them for
+          print. Keep in mind that this may delay the production time of your
+          order.
+        </div>
+      )}
     </div>
   );
 };
