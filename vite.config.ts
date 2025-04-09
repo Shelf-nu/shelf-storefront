@@ -54,5 +54,6 @@ export default defineConfig({
         'deepmerge',
       ],
     },
+    noExternal: ['undici', '@remix-run/node'],
   },
 });
