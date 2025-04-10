@@ -1,7 +1,7 @@
 import {
   unstable_composeUploadHandlers,
   unstable_parseMultipartFormData,
-} from '@remix-run/node';
+} from '@remix-run/server-runtime';
 import {getSupabaseAdmin} from './supabase.server';
 
 // Define interfaces for better type safety
@@ -38,7 +38,7 @@ function getCurrentDateFolder(): string {
 
 async function uploadFile(
   fileData: AsyncIterable<Uint8Array>,
-  {filename, contentType, resizeOptions}: UploadOptions,
+  {filename, contentType}: UploadOptions,
   connectionData: ConnectionData,
 ) {
   try {
@@ -52,6 +52,8 @@ async function uploadFile(
     )
       .storage.from('store-files')
       .upload(filename, file, {contentType, upsert: true});
+    console.log('data', data);
+    console.log('error', error);
 
     if (error) {
       throw error;
@@ -73,11 +75,13 @@ export async function parseFileFormData({
   try {
     const uploadHandler = unstable_composeUploadHandlers(
       async ({contentType, data, filename}) => {
+        console.log('contentType', contentType);
         if (!contentType?.includes('image') || !filename) {
           return undefined;
         }
 
         const fileExtension = filename.split('.').pop();
+        console.log('fileExtension', fileExtension);
         const uploadedFilePath = await uploadFile(
           data,
           {

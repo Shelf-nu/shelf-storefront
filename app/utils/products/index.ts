@@ -1,4 +1,4 @@
-import {ProductFragment} from 'storefrontapi.generated';
+import type {ProductFragment} from 'storefrontapi.generated';
 import type {Metafield, Product, ProductWithOptions} from './types';
 
 export const PRODUCT_METAFIELDS_KEYS = [

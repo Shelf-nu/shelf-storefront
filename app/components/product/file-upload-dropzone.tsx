@@ -70,12 +70,12 @@ const FileUploadDropzone: React.FC = () => {
 
       setFile(fileWithPreview);
 
-      // Submit the form after setting the file
-      setTimeout(() => {
-        if (formRef.current) {
-          formRef.current.submit();
-        }
-      }, 0);
+      // // Submit the form after setting the file
+      // setTimeout(() => {
+      //   if (formRef.current) {
+      //     formRef.current.submit();
+      //   }
+      // }, 100);
     },
     [file],
   );
