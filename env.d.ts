@@ -28,6 +28,7 @@ declare global {
    * Declare expected Env parameter in fetch handler.
    */
   interface Env {
+    SHOP_ID: string;
     SESSION_SECRET: string;
     PUBLIC_STOREFRONT_API_TOKEN: string;
     PRIVATE_STOREFRONT_API_TOKEN: string;
@@ -39,6 +40,9 @@ declare global {
     MAILERLITE_ACCOUNT: string;
     STORE_URL: string;
     CRISP_WEBSITE_ID: string;
+
+    SUPABASE_SERVICE_ROLE: string;
+    SUPABASE_URL: string;
   }
 
   /**

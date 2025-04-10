@@ -42,7 +42,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
       >
         <div>
           {/* Discount Banner */}
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {linesCount && (
               <motion.div
                 initial={{height: 0, opacity: 0}}
@@ -64,7 +64,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
           <div aria-labelledby="cart-lines">
             <ul>
               {(cart?.lines?.nodes ?? []).map(

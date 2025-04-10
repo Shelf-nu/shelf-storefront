@@ -6,6 +6,16 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
+  server: {
+    // https: {
+    //   key: './.cert/key.pem',
+    //   cert: './.cert/cert.pem',
+    // },
+    allowedHosts: [
+      'localhost',
+      'viruses-transport-home-surveillance.trycloudflare.com',
+    ],
+  },
   plugins: [
     hydrogen(),
     oxygen(),
@@ -36,7 +46,13 @@ export default defineConfig({
        * Include 'example-dep' in the array below.
        * @see https://vitejs.dev/config/dep-optimization-options
        */
-      include: ['zod', 'prop-types', 'react-fast-compare', 'deepmerge'],
+      include: [
+        'zod',
+        'prop-types',
+        'react-fast-compare',
+        'deepmerge',
+        '@supabase/supabase-js',
+      ],
     },
   },
 });

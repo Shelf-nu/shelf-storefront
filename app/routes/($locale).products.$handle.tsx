@@ -388,7 +388,7 @@ const PRODUCT_FRAGMENT = `#graphql
       description
       title
     }
-    collections(first: 1) {
+    collections(first: 3) {
       nodes {
         title
         handle

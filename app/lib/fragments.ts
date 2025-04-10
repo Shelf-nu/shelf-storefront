@@ -56,6 +56,10 @@ export const CART_QUERY_FRAGMENT = `#graphql
     }
   }
   fragment CartApiQuery on Cart {
+    attributes {
+      key
+      value
+    }
     updatedAt
     id
     checkoutUrl
