@@ -44,6 +44,7 @@ export function ProductForm({
       <br />
       {/* Logo upload dropzone */}
       {shouldShowLogoDropzone && <FileUploadDropzone />}
+      <br />
 
       <div className="flex gap-2 items-center">
         <div className="flex-1 [&>form]:w-full [&>form]:max-w-full">

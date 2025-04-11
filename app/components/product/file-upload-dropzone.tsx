@@ -13,6 +13,7 @@ import {
 
 import {Button} from '../button';
 import {useFetcher} from '@remix-run/react';
+import {CheckCircle, Loader2} from 'lucide-react';
 
 interface FileWithPreview extends File {
   preview: string;
@@ -22,9 +23,10 @@ const FileUploadDropzone: React.FC = () => {
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const fetcher = useFetcher();
-  const formRef = useRef<HTMLFormElement | null>(null);
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
   const ALLOWED_FILE_TYPES = ['image/svg+xml', 'image/png', 'application/pdf'];
@@ -43,8 +45,9 @@ const FileUploadDropzone: React.FC = () => {
   };
 
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[]) => {
       setError('');
+      setUploadSuccess(false);
 
       // Take only the first file if multiple are dropped
       const newFile = acceptedFiles[0];
@@ -69,15 +72,28 @@ const FileUploadDropzone: React.FC = () => {
       }) as FileWithPreview;
 
       setFile(fileWithPreview);
+      setIsUploading(true);
 
-      // // Submit the form after setting the file
-      // setTimeout(() => {
-      //   if (formRef.current) {
-      //     formRef.current.submit();
-      //   }
-      // }, 100);
+      try {
+        // Create FormData and append the file
+        const formData = new FormData();
+        formData.append('file', newFile);
+
+        // Use the fetcher to submit the form
+        fetcher.submit(formData, {
+          method: 'post',
+          action: '/api/file-upload',
+          encType: 'multipart/form-data',
+        });
+
+        // The upload status will be tracked by the useEffect watching fetcher state
+      } catch (err) {
+        console.error('Client-side upload error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to upload file');
+        setIsUploading(false);
+      }
     },
-    [file],
+    [file, fetcher],
   );
 
   const removeFile = (): void => {
@@ -86,6 +102,8 @@ const FileUploadDropzone: React.FC = () => {
     }
     setFile(null);
     setError('');
+    setUploadSuccess(false);
+    setIsUploading(false);
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>): void => {
@@ -175,6 +193,22 @@ const FileUploadDropzone: React.FC = () => {
     }
   };
 
+  // Monitor fetcher state to update component state
+  useEffect(() => {
+    if (isUploading) {
+      if (fetcher.state === 'idle') {
+        // Upload completed
+        if (fetcher.data && fetcher.data.success) {
+          setUploadSuccess(true);
+          setIsUploading(false);
+        } else if (fetcher.data?.error) {
+          setError(fetcher.data.error);
+          setIsUploading(false);
+        }
+      }
+    }
+  }, [fetcher.state, fetcher.data, isUploading]);
+
   // Clean up previews when component unmounts
   useEffect(() => {
     return () => {
@@ -194,60 +228,77 @@ const FileUploadDropzone: React.FC = () => {
             ? 'border-blue-500 bg-blue-50'
             : error
             ? 'border-red-500 bg-red-50'
+            : isUploading
+            ? 'border-blue-300 bg-blue-50 cursor-not-allowed'
+            : uploadSuccess
+            ? 'border-green-500 bg-green-50 cursor-not-allowed'
             : file
             ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
             : 'border-gray-300 hover:border-gray-400'
         }`}
-        onDragEnter={!file ? handleDragEnter : undefined}
-        onDragOver={!file ? handleDragOver : undefined}
-        onDragLeave={!file ? handleDragLeave : undefined}
-        onDrop={!file ? handleDrop : undefined}
-        onClick={() => !file && fileInputRef.current?.click()}
+        onDragEnter={!file && !isUploading ? handleDragEnter : undefined}
+        onDragOver={!file && !isUploading ? handleDragOver : undefined}
+        onDragLeave={!file && !isUploading ? handleDragLeave : undefined}
+        onDrop={!file && !isUploading ? handleDrop : undefined}
+        onClick={() => !file && !isUploading && fileInputRef.current?.click()}
         onKeyDown={(e) => {
-          if (!file && (e.key === 'Enter' || e.key === ' ')) {
+          if (!file && !isUploading && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             fileInputRef.current?.click();
           }
         }}
         aria-label={
-          file
-            ? `File uploaded. Please remove it to upload a different file.`
+          isUploading
+            ? 'File is uploading, please wait.'
+            : uploadSuccess
+            ? 'File uploaded successfully.'
+            : file
+            ? 'File selected. Please remove it to upload a different file.'
             : 'Upload file dropzone. Click or drag and drop a file here.'
         }
-        aria-disabled={!!file}
+        aria-disabled={!!file || isUploading}
       >
         <div className="flex items-center justify-center gap-2">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
-            <CloudUpload
-              className={`size-5 ${file ? 'text-gray-400' : 'text-primary'}`}
-            />
+            {isUploading ? (
+              <Loader2 className="size-5 animate-spin text-blue-500" />
+            ) : uploadSuccess ? (
+              <CheckCircle className="size-5 text-green-500" />
+            ) : (
+              <CloudUpload
+                className={`size-5 ${file ? 'text-gray-400' : 'text-primary'}`}
+              />
+            )}
           </div>
           <div>
             <p className="mb-1 text-sm font-medium text-gray-700">
-              {file ? `File uploaded` : 'Upload your logo here'}
+              {isUploading
+                ? 'Uploading...'
+                : uploadSuccess
+                ? 'Upload Successful!'
+                : file
+                ? 'File selected'
+                : 'Upload your logo here'}
             </p>
             <p className="text-xs text-gray-500">
-              {file
+              {isUploading
+                ? 'Please wait while we upload your file'
+                : uploadSuccess
+                ? 'Your logo has been uploaded successfully'
+                : file
                 ? 'Remove file to upload a different one'
                 : 'SVG, PDF or PNG'}
             </p>
-            <fetcher.Form
-              ref={formRef}
-              action={'/api/file-upload'}
-              encType="multipart/form-data"
-              method="post"
-            >
-              <input
-                id="fileInput"
-                name="file" // Added name attribute for form submission
-                type="file"
-                className="hidden"
-                onChange={handleFileInput}
-                accept=".svg,.png,.pdf"
-                ref={fileInputRef}
-                disabled={!!file}
-              />
-            </fetcher.Form>
+            <input
+              id="fileInput"
+              name="file"
+              type="file"
+              className="hidden"
+              onChange={handleFileInput}
+              accept=".svg,.png,.pdf"
+              ref={fileInputRef}
+              disabled={!!file || isUploading}
+            />
           </div>
         </div>
       </div>
@@ -260,17 +311,31 @@ const FileUploadDropzone: React.FC = () => {
         logos to one of the products.
       </div>
 
-      {file ? (
+      {file && (
         <div className="mt-4">
           <h3 className="text-sm font-medium text-gray-700 mb-2">
-            Uploaded file (1/{MAX_FILES})
+            {isUploading ? 'Uploading file...' : 'Uploaded file (1/1)'}
           </h3>
-          <div className="flex justify-between items-center p-2 bg-gray-50 rounded-md border border-gray-200">
+          <div
+            className={`flex justify-between items-center p-2 rounded-md border ${
+              isUploading
+                ? 'bg-blue-50 border-blue-200'
+                : uploadSuccess
+                ? 'bg-green-50 border-green-200'
+                : 'bg-gray-50 border-gray-200'
+            }`}
+          >
             <div className="flex items-center space-x-2">
               {renderFilePreview(file)}
               <span className="text-sm text-gray-700 truncate max-w-xs">
                 {file.name}
               </span>
+              {isUploading && (
+                <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
+              )}
+              {uploadSuccess && (
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              )}
             </div>
             <button
               onClick={(e) => {
@@ -280,9 +345,10 @@ const FileUploadDropzone: React.FC = () => {
               className="text-red-500 hover:text-red-700 focus:outline-none"
               aria-label={`Remove ${file.name}`}
               type="button"
+              disabled={isUploading}
             >
               <svg
-                className="w-5 h-5"
+                className={`w-5 h-5 ${isUploading ? 'opacity-50' : ''}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -297,7 +363,9 @@ const FileUploadDropzone: React.FC = () => {
             </button>
           </div>
         </div>
-      ) : (
+      )}
+
+      {!file && (
         <div className="mt-2">
           Note: If you choose to not upload your logo, after placing your order,
           we will reach out to gather the logo files from you and check them for

@@ -24,7 +24,6 @@ export function AddToCartButton({
             type="hidden"
             value={JSON.stringify(analytics)}
           />
-          <input type="hidden" name="quantity" value={3} />
           <Button
             type="submit"
             onClick={onClick}

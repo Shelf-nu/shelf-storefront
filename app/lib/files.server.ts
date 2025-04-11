@@ -42,27 +42,44 @@ async function uploadFile(
   connectionData: ConnectionData,
 ) {
   try {
-    const chunks = [];
+    const chunks: Uint8Array[] = [];
     for await (const chunk of fileData) chunks.push(chunk);
-    const file = Buffer.concat(chunks);
 
-    const {data, error} = await getSupabaseAdmin(
+    // Calculate total length
+    const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+
+    // Create a single Uint8Array
+    const file = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const chunk of chunks) {
+      file.set(chunk, offset);
+      offset += chunk.length;
+    }
+
+    const supabase = getSupabaseAdmin(
       connectionData.serviceRole,
       connectionData.supabaseUrl,
-    )
-      .storage.from('store-files')
+    );
+
+    const {data, error} = await supabase.storage
+      .from('store-files')
       .upload(filename, file, {contentType, upsert: true});
-    console.log('data', data);
-    console.log('error', error);
 
     if (error) {
+      console.error('Supabase upload error:', JSON.stringify(error));
       throw error;
     }
 
     return data.path;
   } catch (cause) {
+    console.error('Full upload error:', cause);
+    // Rethrow with more specific info if possible
+    if (cause instanceof Error) {
+      throw new Error(`File upload failed: ${cause.message}`, {cause});
+    }
     throw new Error(
       'Something went wrong while uploading the file. Please try again or contact support.',
+      {cause},
     );
   }
 }
@@ -75,13 +92,11 @@ export async function parseFileFormData({
   try {
     const uploadHandler = unstable_composeUploadHandlers(
       async ({contentType, data, filename}) => {
-        console.log('contentType', contentType);
         if (!contentType?.includes('image') || !filename) {
           return undefined;
         }
 
         const fileExtension = filename.split('.').pop();
-        console.log('fileExtension', fileExtension);
         const uploadedFilePath = await uploadFile(
           data,
           {
@@ -101,6 +116,7 @@ export async function parseFileFormData({
     );
     return formData;
   } catch (cause) {
+    console.error('Error parsing form data:', cause);
     throw new Error(
       'Something went wrong while uploading the file. Please try again or contact support.',
     );

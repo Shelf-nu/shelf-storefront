@@ -8,13 +8,22 @@ export async function action({context, request}: ActionFunctionArgs) {
     serviceRole: env.SUPABASE_SERVICE_ROLE,
     supabaseUrl: env.SUPABASE_URL,
   };
-  console.log('connectionData', connectionData);
 
   const formData = await parseFileFormData({
     request,
-    newFileName: `new-file`,
+    newFileName: `new-file-${Date.now()}`,
     connectionData,
   });
+  const file = formData.get('file');
 
-  return json({success: true}, {status: 200});
+  console.log(`File: ${file}`);
+
+  if (!file) {
+    return json(
+      {error: 'File not found'},
+      {status: 400, headers: new Headers()},
+    );
+  }
+
+  return json({success: true, file}, {status: 200, headers: new Headers()});
 }

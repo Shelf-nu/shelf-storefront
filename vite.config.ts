@@ -13,7 +13,7 @@ export default defineConfig({
     // },
     allowedHosts: [
       'localhost',
-      'viruses-transport-home-surveillance.trycloudflare.com',
+      'priorities-runner-jail-requests.trycloudflare.com',
     ],
   },
   plugins: [
