@@ -27,7 +27,7 @@ export function ProductForm({
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
   const shouldShowLogoDropzone = isCustomizedProduct(product);
-  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+  const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
 
   return (
     <div className="">
@@ -46,8 +46,8 @@ export function ProductForm({
       {/* Logo upload dropzone */}
       {shouldShowLogoDropzone && (
         <FileUploadDropzone
-          uploadedFileName={uploadedFileName}
-          setUploadedFileName={setUploadedFileName}
+          uploadedFileUrl={uploadedFileUrl}
+          setUploadedFileUrl={setUploadedFileUrl}
         />
       )}
       <br />

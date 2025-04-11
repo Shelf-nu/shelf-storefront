@@ -10,11 +10,11 @@ interface FileWithPreview extends File {
 }
 
 const FileUploadDropzone = ({
-  uploadedFileName,
-  setUploadedFileName,
+  uploadedFileUrl,
+  setUploadedFileUrl,
 }: {
-  uploadedFileName: string;
-  setUploadedFileName: React.Dispatch<React.SetStateAction<string>>;
+  uploadedFileUrl: string;
+  setUploadedFileUrl: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -106,7 +106,7 @@ const FileUploadDropzone = ({
     setError('');
     setUploadSuccess(false);
     setIsUploading(false);
-    setUploadedFileName('');
+    setUploadedFileUrl('');
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>): void => {
@@ -204,7 +204,7 @@ const FileUploadDropzone = ({
         if (fetcher.data && 'success' in fetcher.data && fetcher.data.success) {
           setUploadSuccess(true);
           if ('fileName' in fetcher.data) {
-            setUploadedFileName(fetcher.data.fileName as string);
+            setUploadedFileUrl(fetcher.data.fileName as string);
           }
           setIsUploading(false);
         } else if (fetcher.data && 'error' in fetcher.data) {
@@ -213,7 +213,7 @@ const FileUploadDropzone = ({
         }
       }
     }
-  }, [fetcher.state, fetcher.data, isUploading, setUploadedFileName]);
+  }, [fetcher.state, fetcher.data, isUploading, setUploadedFileUrl]);
 
   // Clean up previews when component unmounts
   useEffect(() => {
@@ -344,7 +344,7 @@ const FileUploadDropzone = ({
                 file={file}
                 removeFile={removeFile}
                 isUploading={isUploading}
-                uploadedFileName={uploadedFileName}
+                uploadedFileUrl={uploadedFileUrl}
               />
             </div>
           </div>
@@ -369,12 +369,12 @@ function DeleteFileButton({
   file,
   removeFile,
   isUploading,
-  uploadedFileName,
+  uploadedFileUrl,
 }: {
   file: FileWithPreview;
   removeFile: () => void;
   isUploading: boolean;
-  uploadedFileName: string;
+  uploadedFileUrl: string;
 }) {
   const fetcher = useFetcher<FileUploadAction>();
   return (
@@ -384,7 +384,7 @@ function DeleteFileButton({
       encType="multipart/form-data"
     >
       <input type="hidden" name="intent" value="delete" />
-      <input type="hidden" name="fileName" value={uploadedFileName} />
+      <input type="hidden" name="url" value={uploadedFileUrl} />
       <button
         onClick={(e) => {
           e.stopPropagation();

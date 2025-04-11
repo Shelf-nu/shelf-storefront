@@ -1,7 +1,7 @@
 import type {ActionFunctionArgs} from '@remix-run/server-runtime';
 import {json} from '@remix-run/server-runtime';
 import type {ConnectionData} from '~/lib/files.server';
-import {parseFileFormData} from '~/lib/files.server';
+import {deleteImage, parseFileFormData} from '~/lib/files.server';
 
 export type FileUploadAction = typeof action;
 
@@ -18,11 +18,9 @@ export async function action({context, request}: ActionFunctionArgs) {
     case 'upload':
       return await handleFileUpload(request, connectionData);
     case 'delete':
-      const fileName = formData.get('fileName');
-      console.log('Deleting file:', fileName);
-      return json(
-        {success: true, message: 'File deleted successfully'},
-        {status: 200, headers: new Headers()},
+      return await handleFileDelete(
+        formData.get('url') as string,
+        connectionData,
       );
     default:
       return json(
@@ -52,6 +50,14 @@ async function handleFileUpload(
 
   return json(
     {success: true, fileName: file},
+    {status: 200, headers: new Headers()},
+  );
+}
+
+async function handleFileDelete(url: string, connectionData: ConnectionData) {
+  await deleteImage({url, connectionData});
+  return json(
+    {success: true, message: 'File deleted successfully'},
     {status: 200, headers: new Headers()},
   );
 }

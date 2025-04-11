@@ -146,3 +146,45 @@ export function getPublicFileURL({
     throw new Error('Failed to get public file URL', {cause});
   }
 }
+
+export async function deleteImage({
+  url,
+  connectionData,
+}: {
+  url: string;
+  connectionData: ConnectionData;
+}) {
+  try {
+    const path = extractImageNameFromSupabaseUrl(url);
+    if (!path) {
+      throw new Error('Cannot extract the image path from the URL');
+    }
+
+    const {error} = await getSupabaseAdmin(
+      connectionData.serviceRole,
+      connectionData.supabaseUrl,
+    )
+      .storage.from('store-files')
+      .remove([path]);
+
+    if (error) {
+      throw error;
+    }
+
+    return true;
+  } catch (cause) {
+    throw new Error('Fail to delete the asset image', {cause});
+  }
+}
+
+export const extractImageNameFromSupabaseUrl = (url: string) => {
+  const regex = new RegExp(
+    `\\/store-files\\/([a-f0-9-]+)\\/([a-z0-9]+)\\/([a-z0-9\\-]+\\.[a-z]{3,4})`,
+    'i',
+  );
+  const match = url.split('?')[0].match(regex); // split the url at '?' and take the first part
+  if (match) {
+    const path = `${match[1]}/${match[2]}/${match[3]}`;
+    return path;
+  }
+};
