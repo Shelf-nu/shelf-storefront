@@ -30,7 +30,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity! > 0;
   const isCartPage = layout === 'page';
-
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />

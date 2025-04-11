@@ -1,10 +1,11 @@
-import {CloudUpload, CheckCircle, Loader2, Trash2} from 'lucide-react';
+import {CloudUpload, CheckCircle, Trash2} from 'lucide-react';
 import React, {useState, useCallback, useEffect, useMemo} from 'react';
 
-import {useFetcher} from '@remix-run/react';
+import {useFetcher, useFetchers} from '@remix-run/react';
 import type {FileUploadAction} from '~/routes/($locale).api.file-upload';
 import {LogoUploadGuide} from './logo-upload-guide';
 import {Spinner} from '../generic/spinner';
+import {useOptimisticCart} from '@shopify/hydrogen';
 
 interface FileWithPreview extends File {
   preview: string;

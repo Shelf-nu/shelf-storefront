@@ -40,7 +40,7 @@ async function handleFileUpload(
 ) {
   const fileFormData = await parseFileFormData({
     request,
-    newFileName: `new-file-${Date.now()}`,
+    newFileName: `customer-logo-${Date.now()}`,
     connectionData,
   });
   const file = fileFormData.get('file');
