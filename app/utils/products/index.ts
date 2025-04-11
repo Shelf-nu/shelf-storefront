@@ -47,7 +47,7 @@ export function isBundledProduct(product: ProductWithOptions): boolean {
 }
 
 /** Check if the product belongs to the collection with handle 'customized' */
-export function isCustomizedProduct(product: ProductFragment): boolean {
+export function assertIsCustomizedProduct(product: ProductFragment): boolean {
   return product.collections.nodes.some(
     (collection) => collection.handle === 'customized',
   );

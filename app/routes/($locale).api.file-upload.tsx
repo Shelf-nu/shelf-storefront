@@ -13,15 +13,19 @@ export async function action({context, request}: ActionFunctionArgs) {
   };
   const formData = await request.clone().formData();
   const intent = formData.get('intent');
+  const fileUrl = formData.get('url'); // URL to delete
 
   switch (intent) {
     case 'upload':
       return await handleFileUpload(request, connectionData);
     case 'delete':
-      return await handleFileDelete(
-        formData.get('url') as string,
-        connectionData,
-      );
+      if (typeof fileUrl !== 'string') {
+        return json(
+          {error: 'File URL not found'},
+          {status: 400, headers: new Headers()},
+        );
+      }
+      return await handleFileDelete(fileUrl, connectionData);
     default:
       return json(
         {error: 'Invalid intent'},

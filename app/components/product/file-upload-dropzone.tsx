@@ -4,6 +4,7 @@ import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {useFetcher} from '@remix-run/react';
 import type {FileUploadAction} from '~/routes/($locale).api.file-upload';
 import {LogoUploadGuide} from './logo-upload-guide';
+import {Spinner} from '../generic/spinner';
 
 interface FileWithPreview extends File {
   preview: string;
@@ -226,88 +227,105 @@ const FileUploadDropzone = ({
 
   return (
     <div className="w-full">
-      <div
-        role="button"
-        tabIndex={0}
-        className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors ${
-          isDragging
-            ? 'border-blue-500 bg-blue-50'
-            : error
-            ? 'border-red-500 bg-red-50'
-            : isUploading
-            ? 'border-blue-300 bg-blue-50 cursor-not-allowed'
-            : uploadSuccess
-            ? 'border-green-500 bg-green-50 cursor-not-allowed'
-            : file
-            ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
-            : 'border-gray-300 hover:border-gray-400'
-        }`}
-        onDragEnter={!file && !isUploading ? handleDragEnter : undefined}
-        onDragOver={!file && !isUploading ? handleDragOver : undefined}
-        onDragLeave={!file && !isUploading ? handleDragLeave : undefined}
-        onDrop={!file && !isUploading ? handleDrop : undefined}
-        onClick={() => !file && !isUploading && fileInputRef.current?.click()}
-        onKeyDown={(e) => {
-          if (!file && !isUploading && (e.key === 'Enter' || e.key === ' ')) {
-            e.preventDefault();
-            fileInputRef.current?.click();
-          }
-        }}
-        aria-label={
-          isUploading
-            ? 'File is uploading, please wait.'
-            : uploadSuccess
-            ? 'File uploaded successfully.'
-            : file
-            ? 'File selected. Please remove it to upload a different file.'
-            : 'Upload file dropzone. Click or drag and drop a file here.'
-        }
-        aria-disabled={!!file || isUploading}
-      >
-        <div className="flex items-center justify-center gap-2">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
-            {isUploading ? (
-              <Loader2 className="size-5 animate-spin text-blue-500" />
-            ) : uploadSuccess ? (
-              <CheckCircle className="size-5 text-green-500" />
-            ) : (
-              <CloudUpload
-                className={`size-5 ${file ? 'text-gray-400' : 'text-primary'}`}
-              />
-            )}
+      <div>
+        {file ? (
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
+              {isUploading ? 'Uploading file...' : 'Uploaded file (1/1)'}
+            </h3>
+            <div
+              className={`flex justify-between items-center p-2 rounded-md border ${
+                isUploading
+                  ? 'bg-blue-50 border-blue-200'
+                  : uploadSuccess
+                  ? 'bg-green-50 border-green-200'
+                  : 'bg-gray-50 border-gray-200'
+              }`}
+            >
+              <div className="flex items-center justify-between w-full space-x-2">
+                <div className="flex-1 flex items-center space-x-2">
+                  {renderFilePreview(file)}
+                  <span className="text-sm text-gray-700 truncate max-w-xs">
+                    {file.name}
+                  </span>
+                  {isUploading && <Spinner className="h-4 w-4 text-blue-500" />}
+                  {uploadSuccess && (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  )}
+                </div>
+                <DeleteFileButton
+                  file={file}
+                  removeFile={removeFile}
+                  isUploading={isUploading}
+                  uploadedFileUrl={uploadedFileUrl}
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <p className="mb-1 text-sm font-medium text-gray-700">
-              {isUploading
-                ? 'Uploading...'
-                : uploadSuccess
-                ? 'Upload Successful!'
+        ) : (
+          <div
+            role="button"
+            tabIndex={0}
+            className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer transition-colors ${
+              isDragging
+                ? 'border-blue-500 bg-blue-50'
+                : error
+                ? 'border-red-500 bg-red-50'
                 : file
-                ? 'File selected'
-                : 'Upload your logo here'}
-            </p>
-            <p className="text-xs text-gray-500">
-              {isUploading
-                ? 'Please wait while we upload your file'
-                : uploadSuccess
-                ? 'Your logo has been uploaded successfully'
-                : file
-                ? 'Remove file to upload a different one'
-                : 'SVG, PDF or PNG'}
-            </p>
-            <input
-              id="fileInput"
-              name="file"
-              type="file"
-              className="hidden"
-              onChange={handleFileInput}
-              accept=".svg,.png,.pdf"
-              ref={fileInputRef}
-              disabled={!!file || isUploading}
-            />
+                ? 'border-gray-300 bg-gray-50 opacity-60 cursor-not-allowed'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+            onDragEnter={!file && !isUploading ? handleDragEnter : undefined}
+            onDragOver={!file && !isUploading ? handleDragOver : undefined}
+            onDragLeave={!file && !isUploading ? handleDragLeave : undefined}
+            onDrop={!file && !isUploading ? handleDrop : undefined}
+            onClick={() =>
+              !file && !isUploading && fileInputRef.current?.click()
+            }
+            onKeyDown={(e) => {
+              if (
+                !file &&
+                !isUploading &&
+                (e.key === 'Enter' || e.key === ' ')
+              ) {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
+            aria-label={
+              'Upload file dropzone. Click or drag and drop a file here.'
+            }
+            aria-disabled={!!file || isUploading}
+          >
+            <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100">
+                <CloudUpload
+                  className={`size-5 ${
+                    file ? 'text-gray-400' : 'text-primary'
+                  }`}
+                />
+              </div>
+              <div>
+                <p className="mb-1 text-sm font-medium text-gray-700">
+                  Upload your logo here
+                </p>
+                <p className="text-xs text-gray-500">SVG, PDF or PNG</p>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+        <input
+          id="fileInput"
+          name="file"
+          type="file"
+          className="hidden"
+          onChange={handleFileInput}
+          accept=".svg,.png,.pdf"
+          ref={fileInputRef}
+          disabled={!!file || isUploading}
+        />
       </div>
+
       {error && <div className="mt-2 text-sm text-red-600">{error}</div>}
 
       <div className="mt-1 text-xs text-gray-500">
@@ -315,44 +333,8 @@ const FileUploadDropzone = ({
         results.
       </div>
 
-      {file && (
-        <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">
-            {isUploading ? 'Uploading file...' : 'Uploaded file (1/1)'}
-          </h3>
-          <div
-            className={`flex justify-between items-center p-2 rounded-md border ${
-              isUploading
-                ? 'bg-blue-50 border-blue-200'
-                : uploadSuccess
-                ? 'bg-green-50 border-green-200'
-                : 'bg-gray-50 border-gray-200'
-            }`}
-          >
-            <div className="flex items-center space-x-2">
-              {renderFilePreview(file)}
-              <span className="text-sm text-gray-700 truncate max-w-xs">
-                {file.name}
-              </span>
-              {isUploading && (
-                <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
-              )}
-              {uploadSuccess && (
-                <CheckCircle className="h-4 w-4 text-green-500" />
-              )}
-              <DeleteFileButton
-                file={file}
-                removeFile={removeFile}
-                isUploading={isUploading}
-                uploadedFileUrl={uploadedFileUrl}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       {!file && (
-        <div className="mt-2">
+        <div className="mt-2 text-xs">
           Note: If you choose to not upload your logo, after placing your order,
           we will reach out to gather the logo files from you and check them for
           print. Keep in mind that this may delay the production time of your
@@ -377,19 +359,25 @@ function DeleteFileButton({
   uploadedFileUrl: string;
 }) {
   const fetcher = useFetcher<FileUploadAction>();
+  useEffect(() => {
+    if (
+      fetcher.state === 'submitting' &&
+      fetcher.formData?.get('intent') === 'delete'
+    ) {
+      removeFile();
+    }
+  }, [fetcher.state, fetcher.data, removeFile, fetcher.formData]);
+
   return (
     <fetcher.Form
       method="post"
       action="/api/file-upload"
       encType="multipart/form-data"
+      className="ml-auto flex"
     >
       <input type="hidden" name="intent" value="delete" />
       <input type="hidden" name="url" value={uploadedFileUrl} />
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          removeFile();
-        }}
         className="text-red-500 hover:text-red-700 focus:outline-none"
         aria-label={`Remove ${file.name}`}
         type="submit"

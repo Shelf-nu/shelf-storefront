@@ -13,7 +13,7 @@ import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
 import {Button} from './button';
 import {QuantitySelector} from './product/quantity-selector';
 import FileUploadDropzone from './product/file-upload-dropzone';
-import {isCustomizedProduct} from '~/utils/products';
+import {assertIsCustomizedProduct} from '~/utils/products';
 
 export function ProductForm({
   product,
@@ -26,7 +26,7 @@ export function ProductForm({
 }) {
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
-  const shouldShowLogoDropzone = isCustomizedProduct(product);
+  const isCustomizedProduct = assertIsCustomizedProduct(product);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
 
   return (
@@ -44,7 +44,7 @@ export function ProductForm({
 
       <br />
       {/* Logo upload dropzone */}
-      {shouldShowLogoDropzone && (
+      {isCustomizedProduct && (
         <FileUploadDropzone
           uploadedFileUrl={uploadedFileUrl}
           setUploadedFileUrl={setUploadedFileUrl}
@@ -66,6 +66,15 @@ export function ProductForm({
                       merchandiseId: selectedVariant.id,
                       quantity,
                       selectedVariant,
+                      ...(isCustomizedProduct &&
+                        uploadedFileUrl !== '' && {
+                          attributes: [
+                            {
+                              key: 'customer logo',
+                              value: uploadedFileUrl,
+                            },
+                          ],
+                        }),
                     },
                   ]
                 : []

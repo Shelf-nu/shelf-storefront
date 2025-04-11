@@ -155,17 +155,13 @@ export async function deleteImage({
   connectionData: ConnectionData;
 }) {
   try {
-    const path = extractImageNameFromSupabaseUrl(url);
-    if (!path) {
-      throw new Error('Cannot extract the image path from the URL');
-    }
-
+    const filePath = url.split(`store-files/`)[1];
     const {error} = await getSupabaseAdmin(
       connectionData.serviceRole,
       connectionData.supabaseUrl,
     )
       .storage.from('store-files')
-      .remove([path]);
+      .remove([filePath]);
 
     if (error) {
       throw error;
