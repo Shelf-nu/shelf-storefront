@@ -27,6 +27,7 @@ export function ProductForm({
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
   const shouldShowLogoDropzone = isCustomizedProduct(product);
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
 
   return (
     <div className="">
@@ -43,7 +44,12 @@ export function ProductForm({
 
       <br />
       {/* Logo upload dropzone */}
-      {shouldShowLogoDropzone && <FileUploadDropzone />}
+      {shouldShowLogoDropzone && (
+        <FileUploadDropzone
+          uploadedFileName={uploadedFileName}
+          setUploadedFileName={setUploadedFileName}
+        />
+      )}
       <br />
 
       <div className="flex gap-2 items-center">

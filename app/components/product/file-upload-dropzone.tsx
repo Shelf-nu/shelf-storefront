@@ -1,48 +1,49 @@
-import {CloudUpload} from 'lucide-react';
-import React, {useState, useCallback, useEffect, useRef} from 'react';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../shadcn/dialog';
+import {CloudUpload, CheckCircle, Loader2, Trash2} from 'lucide-react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 
-import {Button} from '../button';
 import {useFetcher} from '@remix-run/react';
-import {CheckCircle, Loader2} from 'lucide-react';
+import type {FileUploadAction} from '~/routes/($locale).api.file-upload';
+import {LogoUploadGuide} from './logo-upload-guide';
 
 interface FileWithPreview extends File {
   preview: string;
 }
 
-const FileUploadDropzone: React.FC = () => {
+const FileUploadDropzone = ({
+  uploadedFileName,
+  setUploadedFileName,
+}: {
+  uploadedFileName: string;
+  setUploadedFileName: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const fetcher = useFetcher();
+  const fetcher = useFetcher<FileUploadAction>();
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
-  const ALLOWED_FILE_TYPES = ['image/svg+xml', 'image/png', 'application/pdf'];
-  const MAX_FILES = 1; // Changed to 1 maximum file
+  const ALLOWED_FILE_TYPES = useMemo(
+    () => ['image/svg+xml', 'image/png', 'application/pdf'],
+    [],
+  );
 
-  const validateFile = (file: File): string | null => {
-    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-      return 'File type not supported. Please upload SVG, PDF or PNG.';
-    }
+  const validateFile = useCallback(
+    (file: File): string | null => {
+      if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        return 'File type not supported. Please upload SVG, PDF or PNG.';
+      }
 
-    if (file.size > MAX_FILE_SIZE) {
-      return 'File size too large. Maximum size is 8MB.';
-    }
+      if (file.size > MAX_FILE_SIZE) {
+        return 'File size too large. Maximum size is 8MB.';
+      }
 
-    return null;
-  };
+      return null;
+    },
+    [ALLOWED_FILE_TYPES, MAX_FILE_SIZE],
+  );
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -78,6 +79,7 @@ const FileUploadDropzone: React.FC = () => {
         // Create FormData and append the file
         const formData = new FormData();
         formData.append('file', newFile);
+        formData.append('intent', 'upload');
 
         // Use the fetcher to submit the form
         fetcher.submit(formData, {
@@ -93,7 +95,7 @@ const FileUploadDropzone: React.FC = () => {
         setIsUploading(false);
       }
     },
-    [file, fetcher],
+    [validateFile, file?.preview, fetcher],
   );
 
   const removeFile = (): void => {
@@ -104,6 +106,7 @@ const FileUploadDropzone: React.FC = () => {
     setError('');
     setUploadSuccess(false);
     setIsUploading(false);
+    setUploadedFileName('');
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>): void => {
@@ -198,16 +201,19 @@ const FileUploadDropzone: React.FC = () => {
     if (isUploading) {
       if (fetcher.state === 'idle') {
         // Upload completed
-        if (fetcher.data && fetcher.data.success) {
+        if (fetcher.data && 'success' in fetcher.data && fetcher.data.success) {
           setUploadSuccess(true);
+          if ('fileName' in fetcher.data) {
+            setUploadedFileName(fetcher.data.fileName as string);
+          }
           setIsUploading(false);
-        } else if (fetcher.data?.error) {
-          setError(fetcher.data.error);
+        } else if (fetcher.data && 'error' in fetcher.data) {
+          setError(fetcher.data.error as string);
           setIsUploading(false);
         }
       }
     }
-  }, [fetcher.state, fetcher.data, isUploading]);
+  }, [fetcher.state, fetcher.data, isUploading, setUploadedFileName]);
 
   // Clean up previews when component unmounts
   useEffect(() => {
@@ -306,9 +312,7 @@ const FileUploadDropzone: React.FC = () => {
 
       <div className="mt-1 text-xs text-gray-500">
         Not sure how to upload your logo? <LogoUploadGuide /> for the best
-        results. Your uploaded logos are saved for your entire order. When
-        ordering multiple customizable products, you only need to upload the
-        logos to one of the products.
+        results.
       </div>
 
       {file && (
@@ -336,31 +340,13 @@ const FileUploadDropzone: React.FC = () => {
               {uploadSuccess && (
                 <CheckCircle className="h-4 w-4 text-green-500" />
               )}
+              <DeleteFileButton
+                file={file}
+                removeFile={removeFile}
+                isUploading={isUploading}
+                uploadedFileName={uploadedFileName}
+              />
             </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                removeFile();
-              }}
-              className="text-red-500 hover:text-red-700 focus:outline-none"
-              aria-label={`Remove ${file.name}`}
-              type="button"
-              disabled={isUploading}
-            >
-              <svg
-                className={`w-5 h-5 ${isUploading ? 'opacity-50' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                />
-              </svg>
-            </button>
           </div>
         </div>
       )}
@@ -379,136 +365,38 @@ const FileUploadDropzone: React.FC = () => {
 
 export default FileUploadDropzone;
 
-function LogoUploadGuide() {
+function DeleteFileButton({
+  file,
+  removeFile,
+  isUploading,
+  uploadedFileName,
+}: {
+  file: FileWithPreview;
+  removeFile: () => void;
+  isUploading: boolean;
+  uploadedFileName: string;
+}) {
+  const fetcher = useFetcher<FileUploadAction>();
   return (
-    <Dialog>
-      <DialogTrigger>
-        <Button variant="link" className="text-xs">
-          Read the logo guide
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-h-[100vh] md:max-h-[90vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Logo Upload Guide</DialogTitle>
-          <DialogDescription>
-            Follow these tips for the best results with your customized products
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4 my-4 overflow-y-auto pr-1">
-          <div>
-            <h3 className="text-sm font-medium mb-1">Format Recommendations</h3>
-            <p className="text-sm text-gray-600">
-              For best results, use a landscape-oriented logo. Our label designs
-              are optimized for horizontal logos, which provide better
-              visibility and aesthetic balance on our products.
-            </p>
-            <div className="flex space-x-4 mt-2">
-              <div className="border rounded p-2 flex-1">
-                <p className="text-xs text-center mb-1 text-green-600 font-medium">
-                  Recommended
-                </p>
-                <div className="bg-gray-100 h-12 rounded flex items-center justify-center border">
-                  <div className="bg-gray-300 w-24 h-8 rounded"></div>
-                </div>
-                <p className="text-xs text-center mt-1">Landscape format</p>
-              </div>
-              <div className="border rounded p-2 flex-1">
-                <p className="text-xs text-center mb-1 text-amber-600 font-medium">
-                  Not ideal
-                </p>
-                <div className="bg-gray-100 h-12 rounded flex items-center justify-center border">
-                  <div className="bg-gray-300 w-8 h-8 rounded"></div>
-                </div>
-                <p className="text-xs text-center mt-1">Square format</p>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium mb-1">File Type Priority</h3>
-            <p className="text-sm text-gray-600">
-              Choose the right file format for optimal printing quality:
-            </p>
-            <ol className="mt-2 space-y-2">
-              <li className="flex items-start">
-                <span className="bg-green-100 text-green-800 text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
-                  1
-                </span>
-                <div>
-                  <p className="text-sm font-medium">SVG (Preferred)</p>
-                  <p className="text-xs text-gray-600">
-                    Vector format that scales perfectly at any size without
-                    losing quality.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-green-100 text-green-800 text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
-                  2
-                </span>
-                <div>
-                  <p className="text-sm font-medium">PDF</p>
-                  <p className="text-xs text-gray-600">
-                    Vector-based PDFs maintain quality at any scale and print
-                    with crisp edges.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start">
-                <span className="bg-amber-100 text-amber-800 text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5">
-                  3
-                </span>
-                <div>
-                  <p className="text-sm font-medium">PNG</p>
-                  <p className="text-xs text-gray-600">
-                    Only use if vector formats are unavailable. Choose high
-                    resolution (300+ DPI).
-                  </p>
-                </div>
-              </li>
-            </ol>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium mb-1">Multiple Products</h3>
-            <p className="text-sm text-gray-600">
-              Your uploaded logos are saved for your entire order. When ordering
-              multiple customizable products, you only need to upload the logos
-              to one of the products.
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-bold">NOTE:</span> In case we have
-              questions, we will reach out to you via email. Please ensure you
-              provide a valid email address during checkout.
-            </p>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium mb-1">Design Tips</h3>
-            <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-              <li>
-                Use simple designs with clear lines for best printing results
-              </li>
-              <li>
-                Avoid very fine details that might not reproduce well at small
-                sizes
-              </li>
-              <li>Ensure sufficient contrast between elements of your logo</li>
-              <li>
-                Consider how your logo will look in black and white if
-                applicable
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="secondary">Got it</Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <fetcher.Form
+      method="post"
+      action="/api/file-upload"
+      encType="multipart/form-data"
+    >
+      <input type="hidden" name="intent" value="delete" />
+      <input type="hidden" name="fileName" value={uploadedFileName} />
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          removeFile();
+        }}
+        className="text-red-500 hover:text-red-700 focus:outline-none"
+        aria-label={`Remove ${file.name}`}
+        type="submit"
+        disabled={isUploading}
+      >
+        <Trash2 className={`w-5 h-5 ${isUploading ? 'opacity-50' : ''}`} />
+      </button>
+    </fetcher.Form>
   );
 }

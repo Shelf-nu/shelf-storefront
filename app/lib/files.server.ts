@@ -12,7 +12,7 @@ interface ResizeOptions {
   // Add other resize options as needed
 }
 
-interface ConnectionData {
+export interface ConnectionData {
   serviceRole: string;
   supabaseUrl: string;
 }
@@ -70,7 +70,10 @@ async function uploadFile(
       throw error;
     }
 
-    return data.path;
+    return getPublicFileURL({
+      filename: data.path,
+      connectionData,
+    });
   } catch (cause) {
     console.error('Full upload error:', cause);
     // Rethrow with more specific info if possible
@@ -120,5 +123,26 @@ export async function parseFileFormData({
     throw new Error(
       'Something went wrong while uploading the file. Please try again or contact support.',
     );
+  }
+}
+
+export function getPublicFileURL({
+  filename,
+  connectionData,
+}: {
+  filename: string;
+  connectionData: ConnectionData;
+}) {
+  try {
+    const {data} = getSupabaseAdmin(
+      connectionData.serviceRole,
+      connectionData.supabaseUrl,
+    )
+      .storage.from('store-files')
+      .getPublicUrl(filename);
+
+    return data.publicUrl;
+  } catch (cause) {
+    throw new Error('Failed to get public file URL', {cause});
   }
 }
