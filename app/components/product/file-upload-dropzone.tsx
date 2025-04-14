@@ -1,24 +1,26 @@
 import {CloudUpload, CheckCircle, Trash2} from 'lucide-react';
 import React, {useState, useCallback, useEffect, useMemo} from 'react';
 
-import {useFetcher, useFetchers} from '@remix-run/react';
+import {useFetcher} from '@remix-run/react';
 import type {FileUploadAction} from '~/routes/($locale).api.file-upload';
 import {LogoUploadGuide} from './logo-upload-guide';
 import {Spinner} from '../generic/spinner';
-import {useOptimisticCart} from '@shopify/hydrogen';
 
-interface FileWithPreview extends File {
+export interface FileWithPreview extends File {
   preview: string;
 }
 
 const FileUploadDropzone = ({
   uploadedFileUrl,
   setUploadedFileUrl,
+  file,
+  setFile,
 }: {
   uploadedFileUrl: string;
   setUploadedFileUrl: React.Dispatch<React.SetStateAction<string>>;
+  file: FileWithPreview | null;
+  setFile: React.Dispatch<React.SetStateAction<FileWithPreview | null>>;
 }) => {
-  const [file, setFile] = useState<FileWithPreview | null>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -97,7 +99,7 @@ const FileUploadDropzone = ({
         setIsUploading(false);
       }
     },
-    [validateFile, file?.preview, fetcher],
+    [validateFile, file?.preview, setFile, fetcher],
   );
 
   const removeFile = (): void => {

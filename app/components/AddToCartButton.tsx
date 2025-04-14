@@ -1,6 +1,7 @@
 import {useFetchers, type FetcherWithComponents} from '@remix-run/react';
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
 import {Button} from './button';
+import {useEffect} from 'react';
 
 export function AddToCartButton({
   analytics,
@@ -8,12 +9,14 @@ export function AddToCartButton({
   disabled,
   lines,
   onClick,
+  onSuccess,
 }: {
   analytics?: unknown;
   children: React.ReactNode;
   disabled?: boolean;
   lines: Array<OptimisticCartLineInput>;
   onClick?: () => void;
+  onSuccess?: (data: any) => void;
 }) {
   return (
     <CartForm route="/cart" inputs={{lines}} action={CartForm.ACTIONS.LinesAdd}>
@@ -28,6 +31,7 @@ export function AddToCartButton({
             fetcher={fetcher}
             disabled={disabled ?? fetcher.state !== 'idle'}
             onClick={onClick}
+            onSuccess={onSuccess}
           >
             {children}
           </ButtonWithFetcher>
@@ -42,12 +46,23 @@ function ButtonWithFetcher({
   children,
   disabled,
   onClick,
+  onSuccess,
 }: {
   fetcher: FetcherWithComponents<any>;
   children: React.ReactNode;
   disabled?: boolean;
   onClick?: () => void;
+  onSuccess?: (data: any) => void;
 }) {
+  useEffect(() => {
+    const isSuccess =
+      fetcher.state === 'idle' && fetcher.data && !fetcher.data.errors;
+
+    if (isSuccess && onSuccess) {
+      onSuccess(fetcher.data);
+    }
+  }, [fetcher.state, fetcher.data, onSuccess]);
+
   return (
     <Button
       type="submit"

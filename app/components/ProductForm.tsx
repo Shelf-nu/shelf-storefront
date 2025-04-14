@@ -9,9 +9,8 @@ import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {PricePerSheet} from './product/price-per-sheet';
 import {useState} from 'react';
-import {MinusIcon, PlusIcon} from '@radix-ui/react-icons';
-import {Button} from './button';
 import {QuantitySelector} from './product/quantity-selector';
+import type {FileWithPreview} from './product/file-upload-dropzone';
 import FileUploadDropzone from './product/file-upload-dropzone';
 import {assertIsCustomizedProduct} from '~/utils/products';
 
@@ -27,6 +26,9 @@ export function ProductForm({
   const {open} = useAside();
   const [quantity, setQuantity] = useState(1);
   const isCustomizedProduct = assertIsCustomizedProduct(product);
+
+  /** State for custom products */
+  const [file, setFile] = useState<FileWithPreview | null>(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState<string>('');
 
   return (
@@ -48,6 +50,8 @@ export function ProductForm({
         <FileUploadDropzone
           uploadedFileUrl={uploadedFileUrl}
           setUploadedFileUrl={setUploadedFileUrl}
+          file={file}
+          setFile={setFile}
         />
       )}
       <br />
@@ -79,6 +83,15 @@ export function ProductForm({
                   ]
                 : []
             }
+            /**
+             * When adding a product to the cart, we clean up the file from the state
+             */
+            onSuccess={(data) => {
+              if (isCustomizedProduct && data?.action === 'LinesAdd') {
+                setUploadedFileUrl('');
+                setFile(null);
+              }
+            }}
           >
             {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
           </AddToCartButton>

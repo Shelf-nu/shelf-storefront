@@ -76,6 +76,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       analytics: {
         cartId,
       },
+      action,
     },
     {status, headers},
   );
