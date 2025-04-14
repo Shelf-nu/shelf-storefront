@@ -30,7 +30,6 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
   const className = `cart-main ${withDiscount ? 'with-discount' : ''}`;
   const cartHasItems = cart?.totalQuantity! > 0;
   const isCartPage = layout === 'page';
-
   return (
     <div className={className}>
       <CartEmpty hidden={linesCount} layout={layout} />
@@ -42,7 +41,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
       >
         <div>
           {/* Discount Banner */}
-          <AnimatePresence>
+          {/* <AnimatePresence>
             {linesCount && (
               <motion.div
                 initial={{height: 0, opacity: 0}}
@@ -64,7 +63,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
                 </div>
               </motion.div>
             )}
-          </AnimatePresence>
+          </AnimatePresence> */}
           <div aria-labelledby="cart-lines">
             <ul>
               {(cart?.lines?.nodes ?? []).map(

@@ -1,4 +1,7 @@
-import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
+import type {
+  CartLineUpdateInput,
+  Maybe,
+} from '@shopify/hydrogen/storefront-api-types';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
@@ -27,6 +30,9 @@ export function CartLineItem({
   const {product, title, image, selectedOptions} = merchandise;
   const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
   const {close} = useAside();
+  const customLogo = line?.attributes?.find(
+    (attribute) => attribute.key === 'logo',
+  )?.value;
   return (
     <li
       key={id}
@@ -75,6 +81,19 @@ export function CartLineItem({
             </div>
           </div>
         </Link>
+        {customLogo && (
+          <div>
+            <Link
+              to={customLogo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[12px] text-blue-600 font-normal block"
+            >
+              View uploaded file
+            </Link>
+          </div>
+        )}
+
         <div className="flex justify-between items-center mt-3">
           <ProductPrice price={line?.cost?.totalAmount} />
 
@@ -95,7 +114,9 @@ function CartLineQuantity({line}: {line: OptimisticCartLine}) {
   const {id: lineId, quantity, isOptimistic} = line;
   const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
   const nextQuantity = Number((quantity + 1).toFixed(0));
-
+  const logo = line?.attributes?.find(
+    (attribute) => attribute.key === 'logo',
+  )?.value;
   return (
     <div className="flex gap-3 items-center">
       <div className="cart-line-quantity ">
@@ -132,7 +153,11 @@ function CartLineQuantity({line}: {line: OptimisticCartLine}) {
         </CartLineUpdateButton>
         {/* <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} /> */}
       </div>
-      <CartLineRemoveButton lineIds={[lineId]} disabled={!!line.isOptimistic} />
+      <CartLineRemoveButton
+        lineIds={[lineId]}
+        disabled={!!line.isOptimistic}
+        logo={logo}
+      />
     </div>
   );
 }
@@ -145,15 +170,17 @@ function CartLineQuantity({line}: {line: OptimisticCartLine}) {
 function CartLineRemoveButton({
   lineIds,
   disabled,
+  logo,
 }: {
   lineIds: string[];
   disabled: boolean;
+  logo?: Maybe<string>;
 }) {
   return (
     <CartForm
       route="/cart"
       action={CartForm.ACTIONS.LinesRemove}
-      inputs={{lineIds}}
+      inputs={{lineIds, logo}}
     >
       <button
         disabled={disabled}
