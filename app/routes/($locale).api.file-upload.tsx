@@ -58,7 +58,10 @@ async function handleFileUpload(
   );
 }
 
-async function handleFileDelete(url: string, connectionData: ConnectionData) {
+export async function handleFileDelete(
+  url: string,
+  connectionData: ConnectionData,
+) {
   await deleteImage({url, connectionData});
   return json(
     {success: true, message: 'File deleted successfully'},

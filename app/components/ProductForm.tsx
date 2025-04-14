@@ -74,7 +74,7 @@ export function ProductForm({
                         uploadedFileUrl !== '' && {
                           attributes: [
                             {
-                              key: 'customer logo',
+                              key: 'logo',
                               value: uploadedFileUrl,
                             },
                           ],

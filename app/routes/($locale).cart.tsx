@@ -6,6 +6,7 @@ import {json, type ActionFunctionArgs} from '@shopify/remix-oxygen';
 import {CartMain} from '~/components/CartMain';
 import type {RootLoader} from '~/root';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
+import {handleFileDelete} from './($locale).api.file-upload';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle(`Cart`)}];
@@ -33,7 +34,17 @@ export async function action({request, context}: ActionFunctionArgs) {
       result = await cart.updateLines(inputs.lines);
       break;
     case CartForm.ACTIONS.LinesRemove:
-      result = await cart.removeLines(inputs.lineIds);
+      const {lineIds, logo} = inputs;
+
+      /** Remove logo from the storage */
+      if (logo && typeof logo === 'string' && logo !== '') {
+        await handleFileDelete(logo, {
+          serviceRole: context.env.SUPABASE_SERVICE_ROLE,
+          supabaseUrl: context.env.SUPABASE_URL,
+        });
+      }
+
+      result = await cart.removeLines(lineIds);
       break;
     case CartForm.ACTIONS.DiscountCodesUpdate: {
       const formDiscountCode = inputs.discountCode;
