@@ -6,7 +6,7 @@ import {json, type ActionFunctionArgs} from '@shopify/remix-oxygen';
 import {CartMain} from '~/components/CartMain';
 import type {RootLoader} from '~/root';
 import {appendToMetaTitle} from '~/utils/append-to-meta-title';
-import {handleFileDelete} from './($locale).api.file-upload';
+import {deleteImage, handleFileDelete} from '~/lib/files.server';
 
 export const meta: MetaFunction = () => {
   return [{title: appendToMetaTitle(`Cart`)}];
@@ -38,9 +38,12 @@ export async function action({request, context}: ActionFunctionArgs) {
 
       /** Remove logo from the storage */
       if (logo && typeof logo === 'string' && logo !== '') {
-        await handleFileDelete(logo, {
-          serviceRole: context.env.SUPABASE_SERVICE_ROLE,
-          supabaseUrl: context.env.SUPABASE_URL,
+        await deleteImage({
+          url: logo,
+          connectionData: {
+            serviceRole: context.env.SUPABASE_SERVICE_ROLE,
+            supabaseUrl: context.env.SUPABASE_URL,
+          },
         });
       }
 
