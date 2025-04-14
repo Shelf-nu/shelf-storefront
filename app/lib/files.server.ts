@@ -1,4 +1,5 @@
 import {
+  json,
   unstable_composeUploadHandlers,
   unstable_parseMultipartFormData,
 } from '@remix-run/server-runtime';
@@ -184,3 +185,38 @@ export const extractImageNameFromSupabaseUrl = (url: string) => {
     return path;
   }
 };
+
+export async function handleFileUpload(
+  request: Request,
+  connectionData: ConnectionData,
+) {
+  const fileFormData = await parseFileFormData({
+    request,
+    newFileName: `customer-logo-${Date.now()}`,
+    connectionData,
+  });
+  const file = fileFormData.get('file');
+
+  if (!file) {
+    return json(
+      {error: 'File not found'},
+      {status: 400, headers: new Headers()},
+    );
+  }
+
+  return json(
+    {success: true, fileName: file},
+    {status: 200, headers: new Headers()},
+  );
+}
+
+export async function handleFileDelete(
+  url: string,
+  connectionData: ConnectionData,
+) {
+  await deleteImage({url, connectionData});
+  return json(
+    {success: true, message: 'File deleted successfully'},
+    {status: 200, headers: new Headers()},
+  );
+}

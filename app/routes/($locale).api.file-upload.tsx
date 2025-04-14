@@ -1,7 +1,6 @@
 import type {ActionFunctionArgs} from '@remix-run/server-runtime';
 import {json} from '@remix-run/server-runtime';
-import type {ConnectionData} from '~/lib/files.server';
-import {deleteImage, parseFileFormData} from '~/lib/files.server';
+import {handleFileDelete, handleFileUpload} from '~/lib/files.server';
 
 export type FileUploadAction = typeof action;
 
@@ -32,39 +31,4 @@ export async function action({context, request}: ActionFunctionArgs) {
         {status: 400, headers: new Headers()},
       );
   }
-}
-
-async function handleFileUpload(
-  request: Request,
-  connectionData: ConnectionData,
-) {
-  const fileFormData = await parseFileFormData({
-    request,
-    newFileName: `customer-logo-${Date.now()}`,
-    connectionData,
-  });
-  const file = fileFormData.get('file');
-
-  if (!file) {
-    return json(
-      {error: 'File not found'},
-      {status: 400, headers: new Headers()},
-    );
-  }
-
-  return json(
-    {success: true, fileName: file},
-    {status: 200, headers: new Headers()},
-  );
-}
-
-export async function handleFileDelete(
-  url: string,
-  connectionData: ConnectionData,
-) {
-  await deleteImage({url, connectionData});
-  return json(
-    {success: true, message: 'File deleted successfully'},
-    {status: 200, headers: new Headers()},
-  );
 }
